@@ -37,13 +37,14 @@ static void BM_plywoot(benchmark::State &state, const std::string &filename)
       state.SkipWithError("could not load triangle data; face element not found in input data");
     }
 
-    using VertexLayout = plywoot::reflect::Layout<float, float, float>;
-    const std::vector<Vertex> vertices{plyIn.read<Vertex, VertexLayout>(vertexElement)};
-    benchmark::DoNotOptimize(vertices);
-
+    using VertexLayout = plywoot::reflect::Layout<plywoot::reflect::Pack<float, 3>>;
     using TriangleLayout = plywoot::reflect::Layout<plywoot::reflect::Array<int, 3>>;
-    const std::vector<Triangle> triangles{plyIn.read<Triangle, TriangleLayout>(faceElement)};
-    benchmark::DoNotOptimize(triangles);
+
+    std::vector<Vertex> vertices{plyIn.read<Vertex, VertexLayout>(vertexElement)};
+    std::vector<Triangle> triangles{plyIn.read<Triangle, TriangleLayout>(faceElement)};
+
+    const TriangleMesh mesh{std::move(triangles), std::move(vertices)};
+    benchmark::DoNotOptimize(mesh);
   }
 }
 
@@ -69,8 +70,7 @@ static void BM_miniply(benchmark::State &state, const std::string &filename)
     facesElem->convert_list_to_fixed_size(
         facesElem->find_property("vertex_indices"), verts_per_face, listIdxs.data());
 
-    std::vector<Triangle> triangles;
-    std::vector<Vertex> vertices;
+    TriangleMesh mesh;
 
     bool gotVerts = false;
     bool gotFaces = false;
@@ -85,8 +85,8 @@ static void BM_miniply(benchmark::State &state, const std::string &filename)
 
         uint32_t propIdxs[3];
         if (!reader.find_pos(propIdxs)) { break; }
-        vertices.resize(reader.num_rows());
-        reader.extract_properties(propIdxs, 3, miniply::PLYPropertyType::Float, vertices.data());
+        mesh.vertices.resize(reader.num_rows());
+        reader.extract_properties(propIdxs, 3, miniply::PLYPropertyType::Float, mesh.vertices.data());
         gotVerts = true;
       }
       else if (!gotFaces && reader.element_is(miniply::kPLYFaceElement))
@@ -96,16 +96,15 @@ static void BM_miniply(benchmark::State &state, const std::string &filename)
           state.SkipWithError("could not load triangle data; could not load face element");
         }
 
-        triangles.resize(reader.num_rows());
+        mesh.triangles.resize(reader.num_rows());
         reader.extract_properties(
-            listIdxs.data(), verts_per_face, miniply::PLYPropertyType::Int, triangles.data());
+            listIdxs.data(), verts_per_face, miniply::PLYPropertyType::Int, mesh.triangles.data());
         gotFaces = true;
       }
       reader.next_element();
     }
 
-    benchmark::DoNotOptimize(triangles);
-    benchmark::DoNotOptimize(vertices);
+    benchmark::DoNotOptimize(mesh);
   }
 }
 
@@ -115,6 +114,9 @@ BENCHMARK_CAPTURE(BM_miniply, "Asian Dragon (binary big endian)", "models/xyzrgb
 BENCHMARK_CAPTURE(BM_plywoot, "Lucy (binary big endian)", "models/lucy.ply");
 BENCHMARK_CAPTURE(BM_miniply, "Lucy (binary big endian)", "models/lucy.ply");
 
+BENCHMARK_CAPTURE(BM_plywoot, "DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
+BENCHMARK_CAPTURE(BM_miniply, "DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
+
 BENCHMARK_CAPTURE(BM_plywoot, "Dragon (ASCII)", "models/dragon_vrip.ply");
 BENCHMARK_CAPTURE(BM_miniply, "Dragon (ASCII)", "models/dragon_vrip.ply");
 
@@ -123,8 +125,5 @@ BENCHMARK_CAPTURE(BM_miniply, "Happy Buddha (ASCII)", "models/happy_vrip.ply");
 
 BENCHMARK_CAPTURE(BM_plywoot, "Stanford bunny (ASCII)", "models/bun_zipper.ply");
 BENCHMARK_CAPTURE(BM_miniply, "Stanford bunny (ASCII)", "models/bun_zipper.ply");
-
-BENCHMARK_CAPTURE(BM_plywoot, "DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
-BENCHMARK_CAPTURE(BM_miniply, "DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
 
 BENCHMARK_MAIN();
