@@ -1,3 +1,6 @@
 [submodule "submodules/miniply"]
 	path = submodules/miniply
 	url = https://github.com/vilya/miniply
+[submodule "submodules/happly"]
+	path = submodules/happly
+	url = https://github.com/nmwsharp/happly.git
