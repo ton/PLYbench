@@ -3,8 +3,22 @@
 #include <happly/happly.h>
 #include <miniply/miniply.h>
 
+// clang-format off
+#define MSH_STD_INCLUDE_LIBC_HEADERS
+#define MSH_STD_IMPLEMENTATION
+#define MSH_ARGPARSE_INCLUDE_LIBC_HEADERS
+#define MSH_ARGPARSE_IMPLEMENTATION
+#define MSH_PLY_INCLUDE_LIBC_HEADERS
+#define MSH_PLY_IMPLEMENTATION
+#include <assert.h>
+#include <msh/msh_argparse.h>
+#include <msh/msh_ply.h>
+#include <msh/msh_std.h>
+// clang-format on
+
 #include <plywoot/plywoot.hpp>
 
+#include <memory>
 #include <optional>
 #include <string>
 #include <vector>
@@ -87,6 +101,52 @@ std::optional<TriangleMesh> parseMiniply(const std::string &filename)
   }
 
   return mesh;
+}
+
+std::optional<TriangleMesh> parseMshPly(const std::string &filename)
+{
+  const char *vertexProperties[] = {"x", "y", "z"};
+  const char *triangleProperties[] = {"vertex_indices"};
+
+  Vertex *vertices;
+  Triangle *triangles;
+
+  std::int32_t numVertices = 0;
+  std::int32_t numTriangles = 0;
+
+  msh_ply_desc_t vertexDescriptor;
+  vertexDescriptor.element_name = const_cast<char *>("vertex");
+  vertexDescriptor.property_names = vertexProperties;
+  vertexDescriptor.num_properties = 3;
+  vertexDescriptor.data_type = MSH_PLY_FLOAT;
+  vertexDescriptor.list_type = MSH_PLY_INVALID;
+  vertexDescriptor.data = &vertices;
+  vertexDescriptor.list_data = nullptr;
+  vertexDescriptor.data_count = &numVertices;
+
+  msh_ply_desc_t faceDescriptor;
+  faceDescriptor.element_name = const_cast<char *>("face");
+  faceDescriptor.property_names = triangleProperties;
+  faceDescriptor.num_properties = 1;
+  faceDescriptor.data_type = MSH_PLY_INT32;
+  faceDescriptor.list_type = MSH_PLY_UINT8;
+  faceDescriptor.data = &triangles;
+  faceDescriptor.list_data = nullptr;
+  faceDescriptor.data_count = &numTriangles;
+  faceDescriptor.list_size_hint = 3;
+
+  msh_ply_t *plyFile = msh_ply_open(filename.c_str(), "rb");
+  if (!plyFile) { return std::nullopt; }
+
+  msh_ply_add_descriptor(plyFile, &vertexDescriptor);
+  msh_ply_add_descriptor(plyFile, &faceDescriptor);
+  msh_ply_read(plyFile);
+  msh_ply_close(plyFile);
+
+  auto verticesUptr = std::unique_ptr<Vertex, decltype(&free)>(vertices, free);
+  auto trianglesUPtr = std::unique_ptr<Triangle, decltype(&free)>(triangles, free);
+
+  return TriangleMesh{Triangles{triangles, triangles + numTriangles}, Vertices{vertices, vertices + numVertices}};
 }
 
 std::optional<TriangleMesh> parsePlyWoot(const std::string &filename)

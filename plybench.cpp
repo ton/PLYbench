@@ -31,6 +31,19 @@ static void BM_ParseMiniply(benchmark::State &state, const std::string &filename
   }
 }
 
+static void BM_ParseMshPly(benchmark::State &state, const std::string &filename)
+{
+  benchmark::ClobberMemory();
+
+  for (auto _ : state)
+  {
+    std::optional<TriangleMesh> maybeMesh{parseMshPly(filename)};
+    if (!maybeMesh)
+      state.SkipWithError((std::string{"could not parse '"} + filename + "' with msh_ply").data());
+    benchmark::DoNotOptimize(maybeMesh);
+  }
+}
+
 static void BM_ParsePlywoot(benchmark::State &state, const std::string &filename)
 {
   benchmark::ClobberMemory();
@@ -47,6 +60,7 @@ static void BM_ParsePlywoot(benchmark::State &state, const std::string &filename
 #define BENCHMARK_ALL(name, filename)                                                              \
   BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename));                                           \
   BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename));                                          \
+  BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename));                                          \
   BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename));
 
 BENCHMARK_ALL("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
