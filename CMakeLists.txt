@@ -34,7 +34,13 @@ feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 # Define the benchmark target.
 add_executable(plybench
   submodules/miniply/miniply.cpp
+  parsers.cpp
   plybench.cpp
+)
+
+target_include_directories(plybench SYSTEM
+  PRIVATE
+  submodules
 )
 
 target_link_libraries(plybench
