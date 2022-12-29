@@ -167,37 +167,19 @@ static void BM_ParseMiniply(benchmark::State &state, const std::string &filename
   }
 }
 
-BENCHMARK_CAPTURE(BM_ParseHapply, "Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply");
-BENCHMARK_CAPTURE(BM_ParseMiniply, "Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply");
-BENCHMARK_CAPTURE(BM_ParsePlywoot, "Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply");
 
-BENCHMARK_CAPTURE(BM_ParseHapply, "Lucy (binary big endian)", "models/lucy.ply");
-BENCHMARK_CAPTURE(BM_ParseMiniply, "Lucy (binary big endian)", "models/lucy.ply");
-BENCHMARK_CAPTURE(BM_ParsePlywoot, "Lucy (binary big endian)", "models/lucy.ply");
+#define BENCHMARK_ALL(name, filename)                                                              \
+  BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename));                                           \
+  BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename));                                          \
+  BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename));
 
-BENCHMARK_CAPTURE(
-    BM_ParseHapply,
-    "DOOM Combat Scene (binary little endian)",
-    "models/Doom combat scene.ply");
-BENCHMARK_CAPTURE(
-    BM_ParseMiniply,
-    "DOOM Combat Scene (binary little endian)",
-    "models/Doom combat scene.ply");
-BENCHMARK_CAPTURE(
-    BM_ParsePlywoot,
-    "DOOM Combat Scene (binary little endian)",
-    "models/Doom combat scene.ply");
+BENCHMARK_ALL("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
+BENCHMARK_ALL("Lucy (binary big endian)", "models/lucy.ply");
 
-BENCHMARK_CAPTURE(BM_ParseHapply, "Dragon (ASCII)", "models/dragon_vrip.ply");
-BENCHMARK_CAPTURE(BM_ParseMiniply, "Dragon (ASCII)", "models/dragon_vrip.ply");
-BENCHMARK_CAPTURE(BM_ParsePlywoot, "Dragon (ASCII)", "models/dragon_vrip.ply");
+BENCHMARK_ALL("DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
 
-BENCHMARK_CAPTURE(BM_ParseHapply, "Happy Buddha (ASCII)", "models/happy_vrip.ply");
-BENCHMARK_CAPTURE(BM_ParseMiniply, "Happy Buddha (ASCII)", "models/happy_vrip.ply");
-BENCHMARK_CAPTURE(BM_ParsePlywoot, "Happy Buddha (ASCII)", "models/happy_vrip.ply");
-
-BENCHMARK_CAPTURE(BM_ParseHapply, "Stanford bunny (ASCII)", "models/bun_zipper.ply");
-BENCHMARK_CAPTURE(BM_ParseMiniply, "Stanford bunny (ASCII)", "models/bun_zipper.ply");
-BENCHMARK_CAPTURE(BM_ParsePlywoot, "Stanford bunny (ASCII)", "models/bun_zipper.ply");
+BENCHMARK_ALL("Dragon (ASCII)", "models/dragon_vrip.ply");
+BENCHMARK_ALL("Happy Buddha (ASCII)", "models/happy_vrip.ply");
+BENCHMARK_ALL("Stanford bunny (ASCII)", "models/bun_zipper.ply");
 
 BENCHMARK_MAIN();
