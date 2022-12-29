@@ -50,7 +50,7 @@ static void BM_ParsePlywoot(benchmark::State &state, const std::string &filename
 
   for (auto _ : state)
   {
-    std::optional<TriangleMesh> maybeMesh{parsePlyWoot(filename)};
+    std::optional<TriangleMesh> maybeMesh{parsePlywoot(filename)};
     if (!maybeMesh)
       state.SkipWithError((std::string{"could not parse '"} + filename + "' with PLYwoot").data());
     benchmark::DoNotOptimize(maybeMesh);

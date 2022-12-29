@@ -27,24 +27,44 @@ add_compile_options("$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-u
 include(FeatureSummary)
 
 find_package(benchmark REQUIRED)
+find_package(Catch2 3 REQUIRED)
 find_package(PLYwoot REQUIRED)
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 
-# Define the benchmark target.
-add_executable(plybench
+# Add an object library for object code we need to reuse for both the benchmark
+# and unit test applications.
+add_library(PLYbench OBJECT
   submodules/miniply/miniply.cpp
   parsers.cpp
-  plybench.cpp
 )
 
-target_include_directories(plybench SYSTEM
+target_include_directories(PLYbench SYSTEM
   PRIVATE
   submodules
 )
 
+target_link_libraries(PLYbench
+  PLYwoot::plywoot
+)
+
+# Define the benchmark target.
+add_executable(plybench
+  plybench.cpp
+)
+
+# Test executable; depends on Catch2.
+add_executable(tests
+  tests.cpp
+)
+target_link_libraries(tests
+  PRIVATE
+  PLYbench
+  Catch2::Catch2WithMain
+)
+
 target_link_libraries(plybench
   PRIVATE
+  PLYbench
   benchmark::benchmark
-  PLYwoot::plywoot
 )

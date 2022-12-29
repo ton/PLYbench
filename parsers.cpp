@@ -149,7 +149,7 @@ std::optional<TriangleMesh> parseMshPly(const std::string &filename)
   return TriangleMesh{Triangles{triangles, triangles + numTriangles}, Vertices{vertices, vertices + numVertices}};
 }
 
-std::optional<TriangleMesh> parsePlyWoot(const std::string &filename)
+std::optional<TriangleMesh> parsePlywoot(const std::string &filename)
 {
   std::ifstream ifs{filename};
   if (!ifs) { return std::nullopt; }
