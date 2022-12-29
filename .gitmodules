@@ -4,3 +4,6 @@
 [submodule "submodules/happly"]
 	path = submodules/happly
 	url = https://github.com/nmwsharp/happly.git
+[submodule "submodules/msh"]
+	path = submodules/msh
+	url = https://github.com/mhalber/msh
