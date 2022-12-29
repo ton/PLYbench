@@ -13,8 +13,11 @@ struct Triangle
   std::int32_t a, b, c;
 };
 
+using Triangles = std::vector<Triangle>;
+using Vertices = std::vector<Vertex>;
+
 struct TriangleMesh
 {
-  std::vector<Triangle> triangles;
-  std::vector<Vertex> vertices;
+  Triangles triangles;
+  Vertices vertices;
 };
