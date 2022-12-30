@@ -36,7 +36,7 @@ feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 # and unit test applications.
 add_library(PLYbench OBJECT
   submodules/miniply/miniply.cpp
-  parsers.cpp
+  src/parsers.cpp
 )
 
 target_include_directories(PLYbench SYSTEM
@@ -50,12 +50,12 @@ target_link_libraries(PLYbench
 
 # Define the benchmark target.
 add_executable(plybench
-  plybench.cpp
+  src/plybench.cpp
 )
 
 # Test executable; depends on Catch2.
 add_executable(tests
-  tests.cpp
+  src/tests.cpp
 )
 target_link_libraries(tests
   PRIVATE
