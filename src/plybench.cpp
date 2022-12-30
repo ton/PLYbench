@@ -71,10 +71,10 @@ static void BM_ParsePlywoot(benchmark::State &state, const std::string &filename
 }
 
 #define BENCHMARK_ALL(name, filename)                                                              \
-  BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename));                                           \
-  BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename));                                          \
-  BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename));                                           \
-  BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename));
+  BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename))->Unit(benchmark::kMillisecond);            \
+  BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename))->Unit(benchmark::kMillisecond);           \
+  BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename))->Unit(benchmark::kMillisecond);            \
+  BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename))->Unit(benchmark::kMillisecond);
 
 BENCHMARK_ALL("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
 BENCHMARK_ALL("Lucy (binary big endian)", "models/lucy.ply");
