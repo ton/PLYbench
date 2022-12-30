@@ -5,62 +5,75 @@
 
 #include <cstdint>
 
+namespace
+{
+  std::size_t meshSizeInBytes(const TriangleMesh &mesh)
+  {
+    return mesh.triangles.size() * sizeof(Triangle) + mesh.vertices.size() * sizeof(Vertex);
+  }
+}
+
 static void BM_ParseHapply(benchmark::State &state, const std::string &filename)
 {
   benchmark::ClobberMemory();
 
+  std::optional<TriangleMesh> maybeMesh;
   for (auto _ : state)
   {
-    std::optional<TriangleMesh> maybeMesh{parseHapply(filename)};
-    if (!maybeMesh)
+    if (!(maybeMesh = parseHapply(filename)))
       state.SkipWithError((std::string{"could not parse '"} + filename + "' with hapPLY").data());
     benchmark::DoNotOptimize(maybeMesh);
   }
+
+  if (maybeMesh) state.SetBytesProcessed(state.iterations() * meshSizeInBytes(*maybeMesh));
 }
 
 static void BM_ParseMiniply(benchmark::State &state, const std::string &filename)
 {
   benchmark::ClobberMemory();
 
+  std::optional<TriangleMesh> maybeMesh;
   for (auto _ : state)
   {
-    std::optional<TriangleMesh> maybeMesh{parseMiniply(filename)};
-    if (!maybeMesh)
+    if (!(maybeMesh = parseMiniply(filename)))
       state.SkipWithError((std::string{"could not parse '"} + filename + "' with MiniPLY").data());
-    benchmark::DoNotOptimize(maybeMesh);
   }
+
+  if (maybeMesh) state.SetBytesProcessed(state.iterations() * meshSizeInBytes(*maybeMesh));
 }
 
 static void BM_ParseMshPly(benchmark::State &state, const std::string &filename)
 {
   benchmark::ClobberMemory();
 
+  std::optional<TriangleMesh> maybeMesh;
   for (auto _ : state)
   {
-    std::optional<TriangleMesh> maybeMesh{parseMshPly(filename)};
-    if (!maybeMesh)
+    if (!(maybeMesh = parseMshPly(filename)))
       state.SkipWithError((std::string{"could not parse '"} + filename + "' with msh_ply").data());
-    benchmark::DoNotOptimize(maybeMesh);
   }
+
+  if (maybeMesh) state.SetBytesProcessed(state.iterations() * meshSizeInBytes(*maybeMesh));
 }
 
 static void BM_ParsePlywoot(benchmark::State &state, const std::string &filename)
 {
   benchmark::ClobberMemory();
 
+  std::optional<TriangleMesh> maybeMesh;
   for (auto _ : state)
   {
-    std::optional<TriangleMesh> maybeMesh{parsePlywoot(filename)};
-    if (!maybeMesh)
+    if (!(maybeMesh = parsePlywoot(filename)))
       state.SkipWithError((std::string{"could not parse '"} + filename + "' with PLYwoot").data());
-    benchmark::DoNotOptimize(maybeMesh);
   }
+
+  if (maybeMesh) state.SetBytesProcessed(state.iterations() * meshSizeInBytes(*maybeMesh));
 }
 
 #define BENCHMARK_ALL(name, filename)                                                              \
   BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename));                                           \
   BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename));                                          \
-  BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename));                                          \
+  BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename));                                           \
   BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename));
 
 BENCHMARK_ALL("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
