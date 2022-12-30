@@ -154,23 +154,28 @@ std::optional<TriangleMesh> parsePlywoot(const std::string &filename)
   std::ifstream ifs{filename};
   if (!ifs) { return std::nullopt; }
 
+  std::vector<Triangle> triangles;
+  std::vector<Vertex> vertices;
+
   plywoot::IStream plyIn{ifs};
-
-  plywoot::PlyElement vertexElement;
-  bool verticesFound{false};
-  std::tie(vertexElement, verticesFound) = plyIn.element("vertex");
-  if (!verticesFound) { return std::nullopt; }
-
-  plywoot::PlyElement faceElement;
-  bool faceIndicesFound{false};
-  std::tie(faceElement, faceIndicesFound) = plyIn.element("face");
-  if (!faceIndicesFound) { return std::nullopt; }
-
-  using VertexLayout = plywoot::reflect::Layout<plywoot::reflect::Pack<float, 3>>;
-  using TriangleLayout = plywoot::reflect::Layout<plywoot::reflect::Array<int, 3>>;
-
-  std::vector<Vertex> vertices{plyIn.read<Vertex, VertexLayout>(vertexElement)};
-  std::vector<Triangle> triangles{plyIn.read<Triangle, TriangleLayout>(faceElement)};
+  while (plyIn.hasElement())
+  {
+    const plywoot::PlyElement element{plyIn.element()};
+    if (element.name() == "vertex")
+    {
+      using VertexLayout = plywoot::reflect::Layout<plywoot::reflect::Pack<float, 3>>;
+      vertices = plyIn.readElement<Vertex, VertexLayout>();
+    }
+    else if (element.name() == "face")
+    {
+      using TriangleLayout = plywoot::reflect::Layout<plywoot::reflect::Array<int, 3>>;
+      triangles = plyIn.readElement<Triangle, TriangleLayout>();
+    }
+    else
+    {
+      plyIn.skipElement();
+    }
+  }
 
   return TriangleMesh{std::move(triangles), std::move(vertices)};
 }
