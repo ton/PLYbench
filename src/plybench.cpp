@@ -76,13 +76,13 @@ static void BM_ParsePlywoot(benchmark::State &state, const std::string &filename
   BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename))->Unit(benchmark::kMillisecond);            \
   BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename))->Unit(benchmark::kMillisecond);
 
-BENCHMARK_ALL("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
-BENCHMARK_ALL("Lucy (binary big endian)", "models/lucy.ply");
+BENCHMARK_ALL("Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")
+BENCHMARK_ALL("Lucy (binary b/e)", "models/lucy.ply");
 
-BENCHMARK_ALL("DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
+BENCHMARK_ALL("DOOM Combat Scene (binary l/e)", "models/Doom combat scene.ply");
 
 BENCHMARK_ALL("Dragon (ASCII)", "models/dragon_vrip.ply");
 BENCHMARK_ALL("Happy Buddha (ASCII)", "models/happy_vrip.ply");
-BENCHMARK_ALL("Stanford bunny (ASCII)", "models/bun_zipper.ply");
+BENCHMARK_ALL("Stanford Bunny (ASCII)", "models/bun_zipper.ply");
 
 BENCHMARK_MAIN();
