@@ -36,8 +36,13 @@ feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 # and unit test applications.
 add_library(PLYbench OBJECT
   submodules/miniply/miniply.cpp
+  submodules/vcglib/wrap/ply/plylib.cpp
   src/parsers.cpp
 )
+
+# Disable warnings on external source code.
+set_source_files_properties(submodules/miniply/miniply.cpp PROPERTIES COMPILE_FLAGS -w)
+set_source_files_properties(submodules/vcglib/wrap/ply/plylib.cpp PROPERTIES COMPILE_FLAGS -w)
 
 target_include_directories(PLYbench SYSTEM
   PRIVATE

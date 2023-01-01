@@ -2,6 +2,7 @@
 
 #include <happly/happly.h>
 #include <miniply/miniply.h>
+#include <vcglib/wrap/ply/plylib.h>
 
 #include <vcglib/wrap/nanoply/include/nanoply.hpp>
 
@@ -178,6 +179,45 @@ std::optional<TriangleMesh> parseNanoPly(const std::string &filename)
   {
     delete faceDescriptor.dataDescriptor[i];
   }
+
+  return mesh;
+}
+
+std::optional<TriangleMesh> parsePlyLib(const std::string &filename)
+{
+  using namespace vcg::ply;
+
+  PlyFile pf;
+  pf.Open(filename.c_str(), PlyFile::MODE_READ);
+  pf.AddToRead("vertex", "x", T_FLOAT, T_FLOAT, offsetof(Vertex, x), 0, 0, 0, 0, 0);
+  pf.AddToRead("vertex", "y", T_FLOAT, T_FLOAT, offsetof(Vertex, y), 0, 0, 0, 0, 0);
+  pf.AddToRead("vertex", "z", T_FLOAT, T_FLOAT, offsetof(Vertex, z), 0, 0, 0, 0, 0);
+  pf.AddToRead(
+      "face", "vertex_indices", T_INT, T_INT, offsetof(Triangle, a), 1, 0, T_UCHAR, T_UCHAR, 0);
+
+  TriangleMesh mesh;
+
+  for (std::size_t i = 0; i < pf.elements.size(); i++)
+  {
+    const std::size_t n = pf.ElemNumber(i);
+
+    if (!strcmp(pf.ElemName(i), "vertex"))
+    {
+      pf.SetCurElement(i);
+
+      mesh.vertices.resize(n);
+      for (std::size_t j = 0; j < n; ++j) { pf.Read(static_cast<void *>(&mesh.vertices[j])); }
+    }
+    else if (!strcmp(pf.ElemName(i), "face"))
+    {
+      pf.SetCurElement(i);
+
+      mesh.triangles.resize(n);
+      for (std::size_t j = 0; j < n; ++j) { pf.Read(static_cast<void *>(&mesh.triangles[j])); }
+    }
+  }
+
+  pf.Destroy();
 
   return mesh;
 }

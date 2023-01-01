@@ -84,12 +84,27 @@ static void BM_ParsePlywoot(benchmark::State &state, const std::string &filename
   if (maybeMesh) state.SetBytesProcessed(state.iterations() * meshSizeInBytes(*maybeMesh));
 }
 
+static void BM_ParsePlyLib(benchmark::State &state, const std::string &filename)
+{
+  benchmark::ClobberMemory();
+
+  std::optional<TriangleMesh> maybeMesh;
+  for (auto _ : state)
+  {
+    if (!(maybeMesh = parsePlyLib(filename)))
+      state.SkipWithError((std::string{"could not parse '"} + filename + "' with plylib").data());
+  }
+
+  if (maybeMesh) state.SetBytesProcessed(state.iterations() * meshSizeInBytes(*maybeMesh));
+}
+
 #define BENCHMARK_ALL(name, filename)                                                              \
   BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename))->Unit(benchmark::kMillisecond);            \
   BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename))->Unit(benchmark::kMillisecond);           \
   BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename))->Unit(benchmark::kMillisecond);            \
-  BENCHMARK_CAPTURE(BM_ParseNanoPly, (name), (filename))->Unit(benchmark::kMillisecond);            \
-  BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename))->Unit(benchmark::kMillisecond);
+  BENCHMARK_CAPTURE(BM_ParseNanoPly, (name), (filename))->Unit(benchmark::kMillisecond);           \
+  BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename))->Unit(benchmark::kMillisecond);           \
+  BENCHMARK_CAPTURE(BM_ParsePlyLib, (name), (filename))->Unit(benchmark::kMillisecond);
 
 BENCHMARK_ALL("Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")
 BENCHMARK_ALL("Lucy (binary b/e)", "models/lucy.ply");

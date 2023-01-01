@@ -42,7 +42,7 @@ for benchmark in benchmarks:
     cpu_times_by_parser_and_model[(benchmark_name, model_name)] = benchmark['cpu_time']
 
 # Mapping from a raw benchmark name to a human readable parser name.
-benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', 'BM_ParseMiniply' : 'miniply', 'BM_ParseMshPly' : 'msh_ply', 'BM_ParseNanoPly' : 'nanoply', 'BM_ParsePlywoot' : 'PLYwoot'}
+benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', 'BM_ParseMiniply' : 'miniply', 'BM_ParseMshPly' : 'msh_ply', 'BM_ParseNanoPly' : 'nanoply', 'BM_ParsePlywoot' : 'PLYwoot', 'BM_ParsePlyLib' : 'plylib'}
 
 # List of 3D model names, sorted on the format type first, model name second.
 model_names = sorted(list(set([model_name for _, model_name in cpu_times_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
