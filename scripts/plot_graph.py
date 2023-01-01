@@ -10,14 +10,14 @@ dpi = 163
 width = 3840
 height = 2160
 
-bar_label_fontsize = 8
+bar_label_fontsize = 9
 legend_fontsize = 20
 ticks_fontsize = 20
 title_fontsize = 28
 xlabel_fontsize = 20
 ylabel_fontsize = 28
 
-bars_width = 0.85
+bars_width = 0.90
 
 benchmark_data = json.load(sys.stdin)
 benchmarks = benchmark_data['benchmarks']
@@ -42,7 +42,14 @@ for benchmark in benchmarks:
     cpu_times_by_parser_and_model[(benchmark_name, model_name)] = benchmark['cpu_time']
 
 # Mapping from a raw benchmark name to a human readable parser name.
-benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', 'BM_ParseMiniply' : 'miniply', 'BM_ParseMshPly' : 'msh_ply', 'BM_ParseNanoPly' : 'nanoply', 'BM_ParsePlywoot' : 'PLYwoot', 'BM_ParsePlyLib' : 'plylib'}
+benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', \
+                          'BM_ParseMiniply' : 'miniply', \
+                          'BM_ParseMshPly' : 'msh_ply', \
+                          'BM_ParseNanoPly' : 'nanoply', \
+                          'BM_ParsePlywoot' : 'PLYwoot', \
+                          'BM_ParsePlyLib' : 'plylib', \
+                          'BM_ParseRPly' : 'RPly', \
+                         }
 
 # List of 3D model names, sorted on the format type first, model name second.
 model_names = sorted(list(set([model_name for _, model_name in cpu_times_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
@@ -57,7 +64,7 @@ for benchmark_name, parser_name in benchmark_parser_names.items():
     cpu_times = [cpu_times_by_parser_and_model[(benchmark_name, model_name)] for model_name in model_names]
     rect = ax.bar(x + offset, cpu_times, bar_width, label=parser_name)
     offset += bar_width
-    ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize, rotation=0)
+    ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize, rotation=70)
 
 ax.set_title('CPU time [%s] by model and parser' % time_unit, fontsize=title_fontsize)
 ax.set_xticks(x, model_names)

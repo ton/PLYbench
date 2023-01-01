@@ -111,6 +111,14 @@ TEST_CASE("Verify parsers against PLYwoot")
     INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "plylib", "PLYwoot"));
     CHECK(mesh == plywootMesh);
   }
+
+  SECTION("RPly")
+  {
+    auto mesh = parseRPly(std::string("models/") + filename);
+
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "RPly", "PLYwoot"));
+    CHECK(mesh == plywootMesh);
+  }
 }
 
 int main(int argc, char *argv[]) { return Catch::Session().run(argc, argv); }

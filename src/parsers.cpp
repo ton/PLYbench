@@ -2,8 +2,10 @@
 
 #include <happly/happly.h>
 #include <miniply/miniply.h>
-#include <vcglib/wrap/nanoply/include/nanoply.hpp>
+#include <rply/rply.h>
 #include <vcglib/wrap/ply/plylib.h>
+
+#include <vcglib/wrap/nanoply/include/nanoply.hpp>
 
 // clang-format off
 #define MSH_STD_INCLUDE_LIBC_HEADERS
@@ -247,4 +249,92 @@ std::optional<TriangleMesh> parsePlywoot(const std::string &filename)
   }
 
   return TriangleMesh{std::move(triangles), std::move(vertices)};
+}
+
+std::optional<TriangleMesh> parseRPly(const std::string &filename)
+{
+  p_ply ply = ply_open(filename.c_str(), nullptr, 0, nullptr);
+
+  if (!ply) { return std::nullopt; }
+  if (!ply_read_header(ply)) { return std::nullopt; }
+
+  TriangleMesh mesh;
+
+  p_ply_element element = nullptr;
+  while ((element = ply_get_next_element(ply, element)))
+  {
+    const char *name;
+    long n;
+    ply_get_element_info(element, &name, &n);
+    if (!strcmp(name, "vertex")) { mesh.vertices.reserve(n); }
+    if (!strcmp(name, "face")) { mesh.triangles.reserve(n); }
+  }
+
+  auto readVertex = [](p_ply_argument argument)
+  {
+    void *pdata;
+    long idata;
+    ply_get_argument_user_data(argument, &pdata, &idata);
+
+    TriangleMesh *mesh = static_cast<TriangleMesh *>(pdata);
+    const int val_idx = idata;
+
+    const float value = static_cast<float>(ply_get_argument_value(argument));
+
+    switch (val_idx)
+    {
+      case 0:
+        mesh->vertices.push_back(Vertex{value, 0, 0});
+        break;
+      case 1:
+        mesh->vertices.back().y = value;
+        break;
+      case 2:
+        mesh->vertices.back().z = value;
+        break;
+    }
+
+    return 1;
+  };
+
+  auto readTriangle = [](p_ply_argument argument)
+  {
+    void *pdata;
+    ply_get_argument_user_data(argument, &pdata, NULL);
+
+    TriangleMesh *mesh = static_cast<TriangleMesh *>(pdata);
+
+    long length, val_idx;
+    ply_get_argument_property(argument, nullptr, &length, &val_idx);
+
+    const std::int32_t value = static_cast<std::int32_t>(ply_get_argument_value(argument));
+
+    switch (val_idx)
+    {
+      case 0:
+        mesh->triangles.push_back(Triangle{value, 0, 0});
+        break;
+      case 1:
+        mesh->triangles.back().b = value;
+        break;
+      case 2:
+        mesh->triangles.back().c = value;
+        break;
+      default:
+        break;
+    }
+
+    return 1;
+  };
+
+  ply_set_read_cb(ply, "vertex", "x", readVertex, &mesh, 0);
+  ply_set_read_cb(ply, "vertex", "y", readVertex, &mesh, 1);
+  ply_set_read_cb(ply, "vertex", "z", readVertex, &mesh, 2);
+  ply_set_read_cb(ply, "face", "vertex_indices", readTriangle, &mesh, 0);
+
+  if (!ply_read(ply)) { return std::nullopt; }
+
+  ply_close(ply);
+
+  return mesh;
 }

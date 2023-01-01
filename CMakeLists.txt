@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(PLYbench
   VERSION 0.0.1
-  LANGUAGES CXX
+  LANGUAGES C CXX
   HOMEPAGE_URL "https://github.com/ton/plybench"
   DESCRIPTION "PLY benchmark collection"
 )
@@ -32,6 +32,11 @@ find_package(PLYwoot REQUIRED)
 
 feature_summary(WHAT ALL INCLUDE_QUIET_PACKAGES)
 
+# Add an object library for the RPly C library.
+add_library(RPly OBJECT
+  submodules/rply/rply.c
+)
+
 # Add an object library for object code we need to reuse for both the benchmark
 # and unit test applications.
 add_library(PLYbench OBJECT
@@ -42,6 +47,7 @@ add_library(PLYbench OBJECT
 
 # Disable warnings on external source code.
 set_source_files_properties(submodules/miniply/miniply.cpp PROPERTIES COMPILE_FLAGS -w)
+set_source_files_properties(submodules/rply/rply.c PROPERTIES COMPILE_FLAGS -w)
 set_source_files_properties(submodules/vcglib/wrap/ply/plylib.cpp PROPERTIES COMPILE_FLAGS -w)
 
 target_include_directories(PLYbench SYSTEM
@@ -50,6 +56,7 @@ target_include_directories(PLYbench SYSTEM
 )
 
 target_link_libraries(PLYbench
+  PRIVATE
   PLYwoot::plywoot
 )
 
@@ -64,12 +71,14 @@ add_executable(tests
 )
 target_link_libraries(tests
   PRIVATE
+  RPly
   PLYbench
   Catch2::Catch2WithMain
 )
 
 target_link_libraries(plybench
   PRIVATE
+  RPly
   PLYbench
   benchmark::benchmark
 )
