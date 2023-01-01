@@ -3,6 +3,8 @@
 #include <happly/happly.h>
 #include <miniply/miniply.h>
 
+#include <vcglib/wrap/nanoply/include/nanoply.hpp>
+
 // clang-format off
 #define MSH_STD_INCLUDE_LIBC_HEADERS
 #define MSH_STD_IMPLEMENTATION
@@ -146,7 +148,38 @@ std::optional<TriangleMesh> parseMshPly(const std::string &filename)
   auto verticesUptr = std::unique_ptr<Vertex, decltype(&free)>(vertices, free);
   auto trianglesUPtr = std::unique_ptr<Triangle, decltype(&free)>(triangles, free);
 
-  return TriangleMesh{Triangles{triangles, triangles + numTriangles}, Vertices{vertices, vertices + numVertices}};
+  return TriangleMesh{
+      Triangles{triangles, triangles + numTriangles}, Vertices{vertices, vertices + numVertices}};
+}
+
+std::optional<TriangleMesh> parseNanoPly(const std::string &filename)
+{
+  nanoply::Info info(filename);
+
+  TriangleMesh mesh;
+  mesh.triangles.resize(info.GetFaceCount());
+  mesh.vertices.resize(info.GetVertexCount());
+
+  nanoply::ElementDescriptor vertexDescriptor(nanoply::NNP_VERTEX_ELEM);
+  nanoply::ElementDescriptor faceDescriptor(nanoply::NNP_FACE_ELEM);
+  vertexDescriptor.dataDescriptor.push_back(new nanoply::DataDescriptor<Vertex, 3, float>(
+      nanoply::NNP_PXYZ, static_cast<void *>(mesh.vertices.data())));
+  faceDescriptor.dataDescriptor.push_back(new nanoply::DataDescriptor<Triangle, 3, std::int32_t>(
+      nanoply::NNP_FACE_VERTEX_LIST, static_cast<void *>(mesh.triangles.data())));
+
+  std::vector<nanoply::ElementDescriptor *> meshDescriptor = {&vertexDescriptor, &faceDescriptor};
+  OpenModel(info, meshDescriptor);
+
+  for (std::size_t i = 0; i < vertexDescriptor.dataDescriptor.size(); i++)
+  {
+    delete vertexDescriptor.dataDescriptor[i];
+  }
+  for (std::size_t i = 0; i < faceDescriptor.dataDescriptor.size(); i++)
+  {
+    delete faceDescriptor.dataDescriptor[i];
+  }
+
+  return mesh;
 }
 
 std::optional<TriangleMesh> parsePlywoot(const std::string &filename)
@@ -171,10 +204,7 @@ std::optional<TriangleMesh> parsePlywoot(const std::string &filename)
       using TriangleLayout = plywoot::reflect::Layout<plywoot::reflect::Array<int, 3>>;
       triangles = plyIn.readElement<Triangle, TriangleLayout>();
     }
-    else
-    {
-      plyIn.skipElement();
-    }
+    else { plyIn.skipElement(); }
   }
 
   return TriangleMesh{std::move(triangles), std::move(vertices)};

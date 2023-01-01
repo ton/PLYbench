@@ -74,26 +74,34 @@ TEST_CASE("Verify parsers against PLYwoot")
 
   SECTION("hapPLY")
   {
-    auto happlyMesh = parseHapply(std::string("models/") + filename);
+    auto mesh = parseHapply(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(happlyMesh, plywootMesh, "hapPLY", "PLYwoot"));
-    CHECK(happlyMesh == plywootMesh);
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "hapPLY", "PLYwoot"));
+    CHECK(mesh == plywootMesh);
   }
 
   SECTION("MiniPLY")
   {
-    auto miniPlyMesh = parseMiniply(std::string("models/") + filename);
+    auto mesh = parseMiniply(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(miniPlyMesh, plywootMesh, "MiniPLY", "PLYwoot"));
-    CHECK(miniPlyMesh == plywootMesh);
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "MiniPLY", "PLYwoot"));
+    CHECK(mesh == plywootMesh);
   }
 
   SECTION("msh_ply")
   {
-    auto mshPlyMesh = parseMshPly(std::string("models/") + filename);
+    auto mesh = parseMshPly(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mshPlyMesh, plywootMesh, "msh_ply", "PLYwoot"));
-    CHECK(mshPlyMesh == plywootMesh);
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "msh_ply", "PLYwoot"));
+    CHECK(mesh == plywootMesh);
+  }
+
+  SECTION("nanoply")
+  {
+    auto mesh = parseNanoPly(std::string("models/") + filename);
+
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "nanoply", "PLYwoot"));
+    CHECK(mesh == plywootMesh);
   }
 }
 

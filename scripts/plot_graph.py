@@ -6,13 +6,23 @@ import numpy
 import subprocess
 import sys
 
+dpi = 163
+width = 3840
+height = 2160
+
+bar_label_fontsize = 12
+legend_fontsize = 20
+ticks_fontsize = 20
+title_fontsize = 28
+xlabel_fontsize = 20
+ylabel_fontsize = 28
+
+bars_width = 0.85
+
 benchmark_data = json.load(sys.stdin)
 benchmarks = benchmark_data['benchmarks']
 if not benchmarks:
     sys.exit(1)
-
-# Mapping from a raw benchmark name to a human readable parser name.
-benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', 'BM_ParseMiniply' : 'miniply', 'BM_ParseMshPly' : 'msh_ply', 'BM_ParsePlywoot' : 'PLYwoot'}
 
 # Mapping from a parser name and model name to the time required to parse that
 # model by that parser.
@@ -31,23 +41,13 @@ for benchmark in benchmarks:
 
     cpu_times_by_parser_and_model[(benchmark_name, model_name)] = benchmark['cpu_time']
 
-dpi = 163
-width = 3840
-height = 2160
+# Mapping from a raw benchmark name to a human readable parser name.
+benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', 'BM_ParseMiniply' : 'miniply', 'BM_ParseMshPly' : 'msh_ply', 'BM_ParseNanoPly' : 'nanoply', 'BM_ParsePlywoot' : 'PLYwoot'}
 
-bar_label_fontsize = 12
-legend_fontsize = 20
-title_fontsize = 28
-
-xlabel_fontsize = 20
-ylabel_fontsize = 28
-ticks_fontsize = 20
-
-bars_width = 0.85
+# List of 3D model names, sorted on the format type first, model name second.
+model_names = sorted(list(set([model_name for _, model_name in cpu_times_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
 
 fig, ax = matplotlib.pyplot.subplots(figsize=(width / dpi, height / dpi))
-
-model_names = sorted(list(set([model_name for _, model_name in cpu_times_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
 x = numpy.arange(len(model_names))
 
 bar_width = bars_width / len(benchmark_parser_names)
@@ -59,13 +59,12 @@ for benchmark_name, parser_name in benchmark_parser_names.items():
     offset += bar_width
     ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize)
 
-# Add some text for labels, title and custom x-axis tick labels, etc.
-ax.set_ylabel('CPU time [%s]' % time_unit, fontsize=ylabel_fontsize)
 ax.set_title('CPU time [%s] by model and parser' % time_unit, fontsize=title_fontsize)
 ax.set_xticks(x, model_names)
+ax.set_ylabel('CPU time [%s]' % time_unit, fontsize=ylabel_fontsize)
 ax.tick_params(axis='both', labelsize=ticks_fontsize)
 ax.legend(fontsize=legend_fontsize)
 
 fig.tight_layout()
 
-matplotlib.pyplot.savefig(sys.stdout, format='png', dpi=dpi)
+matplotlib.pyplot.savefig(sys.stdout, format='png', dpi=dpi, transparent=True)

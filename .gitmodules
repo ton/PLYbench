@@ -7,3 +7,6 @@
 [submodule "submodules/msh"]
 	path = submodules/msh
 	url = https://github.com/mhalber/msh
+[submodule "submodules/vcglib"]
+	path = submodules/vcglib
+	url = https://github.com/cnr-isti-vclab/vcglib
