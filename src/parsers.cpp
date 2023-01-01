@@ -2,9 +2,8 @@
 
 #include <happly/happly.h>
 #include <miniply/miniply.h>
-#include <vcglib/wrap/ply/plylib.h>
-
 #include <vcglib/wrap/nanoply/include/nanoply.hpp>
+#include <vcglib/wrap/ply/plylib.h>
 
 // clang-format off
 #define MSH_STD_INCLUDE_LIBC_HEADERS
