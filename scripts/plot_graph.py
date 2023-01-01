@@ -10,7 +10,7 @@ dpi = 163
 width = 3840
 height = 2160
 
-bar_label_fontsize = 12
+bar_label_fontsize = 8
 legend_fontsize = 20
 ticks_fontsize = 20
 title_fontsize = 28
@@ -57,7 +57,7 @@ for benchmark_name, parser_name in benchmark_parser_names.items():
     cpu_times = [cpu_times_by_parser_and_model[(benchmark_name, model_name)] for model_name in model_names]
     rect = ax.bar(x + offset, cpu_times, bar_width, label=parser_name)
     offset += bar_width
-    ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize)
+    ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize, rotation=0)
 
 ax.set_title('CPU time [%s] by model and parser' % time_unit, fontsize=title_fontsize)
 ax.set_xticks(x, model_names)
