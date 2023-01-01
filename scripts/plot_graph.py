@@ -67,4 +67,4 @@ ax.legend(fontsize=legend_fontsize)
 
 fig.tight_layout()
 
-matplotlib.pyplot.savefig(sys.stdout, format='png', dpi=dpi, transparent=True)
+matplotlib.pyplot.savefig(sys.stdout, format='png', dpi=dpi)
