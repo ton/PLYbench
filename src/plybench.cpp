@@ -192,13 +192,13 @@ static void BM_WriteTinyply(benchmark::State &state, Format format)
 // (https://github.com/ddiakopoulos/tinyply/issues/59)
 
 #define BENCHMARK_PARSE(name, filename)                                                            \
-  BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename))->Unit(benchmark::kMillisecond);            \
-  BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename))->Unit(benchmark::kMillisecond);           \
-  BENCHMARK_CAPTURE(BM_ParseMshPly, (name), (filename))->Unit(benchmark::kMillisecond);            \
-  BENCHMARK_CAPTURE(BM_ParseNanoPly, (name), (filename))->Unit(benchmark::kMillisecond);           \
-  BENCHMARK_CAPTURE(BM_ParsePlywoot, (name), (filename))->Unit(benchmark::kMillisecond);           \
-  BENCHMARK_CAPTURE(BM_ParsePlyLib, (name), (filename))->Unit(benchmark::kMillisecond);            \
-  BENCHMARK_CAPTURE(BM_ParseRPly, (name), (filename))->Unit(benchmark::kMillisecond);
+  BENCHMARK_CAPTURE(BM_ParseHapply, name, (filename))->Unit(benchmark::kMillisecond);            \
+  BENCHMARK_CAPTURE(BM_ParseMiniply, name, (filename))->Unit(benchmark::kMillisecond);           \
+  BENCHMARK_CAPTURE(BM_ParseMshPly, name, (filename))->Unit(benchmark::kMillisecond);            \
+  BENCHMARK_CAPTURE(BM_ParseNanoPly, name, (filename))->Unit(benchmark::kMillisecond);           \
+  BENCHMARK_CAPTURE(BM_ParsePlywoot, name, (filename))->Unit(benchmark::kMillisecond);           \
+  BENCHMARK_CAPTURE(BM_ParsePlyLib, name, (filename))->Unit(benchmark::kMillisecond);            \
+  BENCHMARK_CAPTURE(BM_ParseRPly, name, (filename))->Unit(benchmark::kMillisecond);
 
 BENCHMARK_PARSE("Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")
 BENCHMARK_CAPTURE(BM_ParseTinyply, "Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")

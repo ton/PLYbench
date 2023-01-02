@@ -29,18 +29,6 @@ if not benchmarks:
 cpu_times_by_parser_and_model = {}
 time_unit = None
 
-# Create a mapping, from PLY file to parser benchmark results.
-for benchmark in benchmarks:
-    time_unit = benchmark['time_unit']
-
-    # Extract the model name, and the parser name.
-    benchmark_name, _, model_name = benchmark['name'].partition('/')
-
-    # Strip off the (" and ") pre- and postfix from the model name.
-    model_name = '\n('.join(model_name[2:-2].split(' ('))
-
-    cpu_times_by_parser_and_model[(benchmark_name, model_name)] = benchmark['cpu_time']
-
 # Mapping from a raw benchmark name to a human readable parser name.
 benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', \
                           'BM_ParseMiniply' : 'miniply', \
@@ -49,7 +37,22 @@ benchmark_parser_names = {'BM_ParseHapply' : 'hapPLY', \
                           'BM_ParsePlywoot' : 'PLYwoot', \
                           'BM_ParsePlyLib' : 'plylib', \
                           'BM_ParseRPly' : 'RPly', \
+                          'BM_ParseTinyply' : 'tinyply 2.3' \
                          }
+
+# Create a mapping, from PLY file to parser benchmark results.
+for benchmark in benchmarks:
+    time_unit = benchmark['time_unit']
+
+    # Extract the model name, and the parser name.
+    benchmark_name, _, model_name = benchmark['name'].partition('/')
+
+    # Strip off quotes from the model name, and split put the model format type
+    # on a separate line.
+    model_name = '\n('.join(model_name.strip('"').split(' ('))
+
+    if benchmark_name in benchmark_parser_names:
+        cpu_times_by_parser_and_model[(benchmark_name, model_name)] = benchmark['cpu_time']
 
 # List of 3D model names, sorted on the format type first, model name second.
 model_names = sorted(list(set([model_name for _, model_name in cpu_times_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
@@ -61,7 +64,7 @@ bar_width = bars_width / len(benchmark_parser_names)
 offset = -0.5 * bars_width
 
 for benchmark_name, parser_name in benchmark_parser_names.items():
-    cpu_times = [cpu_times_by_parser_and_model[(benchmark_name, model_name)] for model_name in model_names]
+    cpu_times = [cpu_times_by_parser_and_model.get((benchmark_name, model_name), float("NaN")) for model_name in model_names]
     rect = ax.bar(x + offset, cpu_times, bar_width, label=parser_name)
     offset += bar_width
     ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize, rotation=70)
