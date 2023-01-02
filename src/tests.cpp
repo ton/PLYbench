@@ -1,67 +1,71 @@
 #include "mesh.h"
 #include "mesh_ios.h"
 #include "parsers.h"
+#include "writers.h"
+#include "util.h"
 
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators.hpp>
 
-#include <sstream>
-
-std::string meshComparisonInfo(
-    const std::optional<TriangleMesh> &maybeX,
-    const std::optional<TriangleMesh> &maybeY,
-    const std::string &lhsName,
-    const std::string &rhsName)
+namespace
 {
-  if (bool(maybeX) != bool(maybeY)) { return "one of the meshes is undefined"; }
-
-  if (maybeX && maybeY)
+  std::string meshComparisonInfo(
+      const std::optional<TriangleMesh> &maybeX,
+      const std::optional<TriangleMesh> &maybeY,
+      const std::string &lhsName,
+      const std::string &rhsName)
   {
-    const TriangleMesh &x = *maybeX;
-    const TriangleMesh &y = *maybeY;
+    if (bool(maybeX) != bool(maybeY)) { return "one of the meshes is undefined"; }
 
-    std::ostringstream oss;
-
-    if (x.vertices.size() != y.vertices.size())
+    if (maybeX && maybeY)
     {
-      oss << "Number of vertices in " << lhsName << " mesh is " << x.vertices.size()
-          << ", whereas the " << rhsName << " mesh contains " << y.vertices.size() << " vertices.";
-      return oss.str();
-    }
+      const TriangleMesh &x = *maybeX;
+      const TriangleMesh &y = *maybeY;
 
-    if (x.triangles.size() != y.triangles.size())
-    {
-      oss << "Number of triangles in " << lhsName << " mesh is " << x.triangles.size()
-          << ", whereas the " << rhsName << " mesh contains " << y.triangles.size()
-          << " triangles.";
-      return oss.str();
-    }
+      std::ostringstream oss;
 
-    for (std::size_t i = 0; i < x.vertices.size(); ++i)
-    {
-      if (x.vertices[i] != y.vertices[i])
+      if (x.vertices.size() != y.vertices.size())
       {
-        oss << "Vertex " << i << " from the " << lhsName << " mesh has value " << x.vertices[i]
-            << ", whereas vertex " << i << " from the " << rhsName
-            << " mesh has value: " << y.vertices[i];
+        oss << "Number of vertices in " << lhsName << " mesh is " << x.vertices.size()
+            << ", whereas the " << rhsName << " mesh contains " << y.vertices.size()
+            << " vertices.";
         return oss.str();
+      }
+
+      if (x.triangles.size() != y.triangles.size())
+      {
+        oss << "Number of triangles in " << lhsName << " mesh is " << x.triangles.size()
+            << ", whereas the " << rhsName << " mesh contains " << y.triangles.size()
+            << " triangles.";
+        return oss.str();
+      }
+
+      for (std::size_t i = 0; i < x.vertices.size(); ++i)
+      {
+        if (x.vertices[i] != y.vertices[i])
+        {
+          oss << "Vertex " << i << " from the " << lhsName << " mesh has value " << x.vertices[i]
+              << ", whereas vertex " << i << " from the " << rhsName
+              << " mesh has value: " << y.vertices[i];
+          return oss.str();
+        }
+      }
+
+      for (std::size_t i = 0; i < x.triangles.size(); ++i)
+      {
+        if (x.triangles[i] != y.triangles[i])
+        {
+          oss << "Triangle " << i << " from the " << lhsName << " mesh has value " << x.triangles[i]
+              << ", whereas triangle " << i << " from the " << rhsName
+              << " mesh has value: " << y.triangles[i];
+          return oss.str();
+        }
       }
     }
 
-    for (std::size_t i = 0; i < x.triangles.size(); ++i)
-    {
-      if (x.triangles[i] != y.triangles[i])
-      {
-        oss << "Triangle " << i << " from the " << lhsName << " mesh has value " << x.triangles[i]
-          << ", whereas triangle " << i << " from the " << rhsName
-          << " mesh has value: " << y.triangles[i];
-        return oss.str();
-      }
-    }
+    return "No comparison information...";
   }
-
-  return "No comparison information...";
 }
 
 TEST_CASE("Verify parsers against PLYwoot")
@@ -84,7 +88,8 @@ TEST_CASE("Verify parsers against PLYwoot")
   {
     auto mesh = parseMiniply(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "MiniPLY", "PLYwoot"));
+    INFO(
+        std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "MiniPLY", "PLYwoot"));
     CHECK(mesh == plywootMesh);
   }
 
@@ -92,7 +97,8 @@ TEST_CASE("Verify parsers against PLYwoot")
   {
     auto mesh = parseMshPly(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "msh_ply", "PLYwoot"));
+    INFO(
+        std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "msh_ply", "PLYwoot"));
     CHECK(mesh == plywootMesh);
   }
 
@@ -100,7 +106,8 @@ TEST_CASE("Verify parsers against PLYwoot")
   {
     auto mesh = parseNanoPly(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "nanoply", "PLYwoot"));
+    INFO(
+        std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "nanoply", "PLYwoot"));
     CHECK(mesh == plywootMesh);
   }
 
@@ -118,6 +125,68 @@ TEST_CASE("Verify parsers against PLYwoot")
 
     INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "RPly", "PLYwoot"));
     CHECK(mesh == plywootMesh);
+  }
+}
+
+TEST_CASE("Test functionality of various writer libraries")
+{
+  auto format = GENERATE(Format::Ascii, Format::BinaryLittleEndian);
+
+  const TriangleMesh mesh = createMesh();
+
+  SECTION(std::string{"hapPLY ("} + formatToString(format) + ')')
+  {
+    TemporaryFile tf = writeHapply(mesh, format);
+    REQUIRE(bool(tf));
+    tf.stream().flush();
+
+    const std::optional<TriangleMesh> maybeMesh = parsePlywoot(tf.filename());
+    REQUIRE(maybeMesh.has_value());
+    CHECK(mesh == *maybeMesh);
+  }
+
+  SECTION(std::string{"msh_ply ("} + formatToString(format) + ')')
+  {
+    TemporaryFile tf = writeMshPly(mesh, format);
+    REQUIRE(bool(tf));
+    tf.stream().flush();
+
+    const std::optional<TriangleMesh> maybeMesh = parsePlywoot(tf.filename());
+    REQUIRE(maybeMesh.has_value());
+    CHECK(mesh == *maybeMesh);
+  }
+
+  SECTION(std::string{"nanoply ("} + formatToString(format) + ')')
+  {
+    TemporaryFile tf = writeNanoPly(mesh, format);
+    REQUIRE(bool(tf));
+    tf.stream().flush();
+
+    const std::optional<TriangleMesh> maybeMesh = parsePlywoot(tf.filename());
+    REQUIRE(maybeMesh.has_value());
+    CHECK(mesh == *maybeMesh);
+  }
+
+  SECTION(std::string{"PLYwoot ("} + formatToString(format) + ')')
+  {
+    TemporaryFile tf = writePlywoot(mesh, format);
+    REQUIRE(bool(tf));
+    tf.stream().flush();
+
+    const std::optional<TriangleMesh> maybeMesh = parsePlywoot(tf.filename());
+    REQUIRE(maybeMesh.has_value());
+    CHECK(mesh == *maybeMesh);
+  }
+
+  SECTION(std::string{"RPly ("} + formatToString(format) + ')')
+  {
+    TemporaryFile tf = writeRPly(mesh, format);
+    REQUIRE(bool(tf));
+    tf.stream().flush();
+
+    const std::optional<TriangleMesh> maybeMesh = parsePlywoot(tf.filename());
+    REQUIRE(maybeMesh.has_value());
+    CHECK(mesh == *maybeMesh);
   }
 }
 

@@ -1,30 +1,18 @@
 #include "parsers.h"
 
+#include "msh_ply.h"
+
+#include <plywoot/plywoot.hpp>
+
 #include <happly/happly.h>
 #include <miniply/miniply.h>
 #include <rply/rply.h>
 #include <vcglib/wrap/ply/plylib.h>
 
-#include <vcglib/wrap/nanoply/include/nanoply.hpp>
-
-// clang-format off
-#define MSH_STD_INCLUDE_LIBC_HEADERS
-#define MSH_STD_IMPLEMENTATION
-#define MSH_ARGPARSE_INCLUDE_LIBC_HEADERS
-#define MSH_ARGPARSE_IMPLEMENTATION
-#define MSH_PLY_INCLUDE_LIBC_HEADERS
-#define MSH_PLY_IMPLEMENTATION
-#include <assert.h>
-#include <msh/msh_argparse.h>
-#include <msh/msh_ply.h>
-#include <msh/msh_std.h>
-// clang-format on
-
-#include <plywoot/plywoot.hpp>
-
 #include <memory>
 #include <optional>
 #include <string>
+#include <vcglib/wrap/nanoply/include/nanoply.hpp>
 #include <vector>
 
 std::optional<TriangleMesh> parseHapply(const std::string &filename)
