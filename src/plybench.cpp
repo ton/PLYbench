@@ -164,6 +164,33 @@ static void BM_WriteRPly(benchmark::State &state, Format format)
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
 }
 
+static void BM_ParseTinyply(benchmark::State &state, const std::string &filename)
+{
+  benchmark::ClobberMemory();
+
+  std::optional<TriangleMesh> maybeMesh;
+  for (auto _ : state)
+  {
+    if (!(maybeMesh = parseTinyply(filename)))
+      state.SkipWithError((std::string{"could not parse '"} + filename + "' with tinyply").data());
+  }
+
+  if (maybeMesh) state.SetBytesProcessed(state.iterations() * meshSizeInBytes(*maybeMesh));
+}
+
+static void BM_WriteTinyply(benchmark::State &state, Format format)
+{
+  benchmark::ClobberMemory();
+
+  const TriangleMesh mesh{createMesh()};
+  for (auto _ : state) { writeTinyply(mesh, format); }
+
+  state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
+}
+
+// Note; tinyply 2.3 seems to be broken for ASCII
+// (https://github.com/ddiakopoulos/tinyply/issues/59)
+
 #define BENCHMARK_PARSE(name, filename)                                                            \
   BENCHMARK_CAPTURE(BM_ParseHapply, (name), (filename))->Unit(benchmark::kMillisecond);            \
   BENCHMARK_CAPTURE(BM_ParseMiniply, (name), (filename))->Unit(benchmark::kMillisecond);           \
@@ -174,9 +201,16 @@ static void BM_WriteRPly(benchmark::State &state, Format format)
   BENCHMARK_CAPTURE(BM_ParseRPly, (name), (filename))->Unit(benchmark::kMillisecond);
 
 BENCHMARK_PARSE("Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")
+BENCHMARK_CAPTURE(BM_ParseTinyply, "Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")
+    ->Unit(benchmark::kMillisecond);
+
 BENCHMARK_PARSE("Lucy (binary b/e)", "models/lucy.ply");
+BENCHMARK_CAPTURE(BM_ParseTinyply, "Lucy (binary b/e)", "models/lucy.ply")
+    ->Unit(benchmark::kMillisecond);
 
 BENCHMARK_PARSE("DOOM Combat Scene (binary l/e)", "models/Doom combat scene.ply");
+BENCHMARK_CAPTURE(BM_ParseTinyply, "DOOM Combat Scene (binary l/e)", "models/Doom combat scene.ply")
+    ->Unit(benchmark::kMillisecond);
 
 BENCHMARK_PARSE("Dragon (ASCII)", "models/dragon_vrip.ply");
 BENCHMARK_PARSE("Happy Buddha (ASCII)", "models/happy_vrip.ply");
@@ -196,6 +230,9 @@ BENCHMARK_CAPTURE(BM_WritePlywoot, "Binary", Format::BinaryLittleEndian)
     ->Unit(benchmark::kMillisecond);
 BENCHMARK_CAPTURE(BM_WriteRPly, "ASCII", Format::Ascii)->Unit(benchmark::kMillisecond);
 BENCHMARK_CAPTURE(BM_WriteRPly, "Binary", Format::BinaryLittleEndian)
+    ->Unit(benchmark::kMillisecond);
+BENCHMARK_CAPTURE(BM_WriteTinyply, "ASCII", Format::Ascii)->Unit(benchmark::kMillisecond);
+BENCHMARK_CAPTURE(BM_WriteTinyply, "Binary", Format::BinaryLittleEndian)
     ->Unit(benchmark::kMillisecond);
 
 BENCHMARK_MAIN();

@@ -32,3 +32,4 @@ TemporaryFile writeMshPly(const TriangleMesh &mesh, Format format);
 TemporaryFile writeNanoPly(const TriangleMesh &mesh, Format format);
 TemporaryFile writePlywoot(const TriangleMesh &mesh, Format format);
 TemporaryFile writeRPly(const TriangleMesh &mesh, Format format);
+TemporaryFile writeTinyply(const TriangleMesh &mesh, Format format);

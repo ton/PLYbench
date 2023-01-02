@@ -1,8 +1,8 @@
 #include "mesh.h"
 #include "mesh_ios.h"
 #include "parsers.h"
-#include "writers.h"
 #include "util.h"
+#include "writers.h"
 
 #include <catch2/catch_session.hpp>
 #include <catch2/catch_test_macros.hpp>
@@ -128,6 +128,20 @@ TEST_CASE("Verify parsers against PLYwoot")
   }
 }
 
+// Note; tinyply 2.3 is broken for ASCII PLY files (see:
+// https://github.com/ddiakopoulos/tinyply/issues/59).
+TEST_CASE("Verify tinyply against PLYwoot")
+{
+  auto filename = GENERATE("lucy.ply", "xyzrgb_dragon.ply", "Doom combat scene.ply");
+
+  const auto plywootMesh = parsePlywoot(std::string("models/") + filename);
+
+  auto mesh = parseTinyply(std::string("models/") + filename);
+
+  INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "tinyply", "PLYwoot"));
+  CHECK(mesh == plywootMesh);
+}
+
 TEST_CASE("Test functionality of various writer libraries")
 {
   auto format = GENERATE(Format::Ascii, Format::BinaryLittleEndian);
@@ -181,6 +195,17 @@ TEST_CASE("Test functionality of various writer libraries")
   SECTION(std::string{"RPly ("} + formatToString(format) + ')')
   {
     TemporaryFile tf = writeRPly(mesh, format);
+    REQUIRE(bool(tf));
+    tf.stream().flush();
+
+    const std::optional<TriangleMesh> maybeMesh = parsePlywoot(tf.filename());
+    REQUIRE(maybeMesh.has_value());
+    CHECK(mesh == *maybeMesh);
+  }
+
+  SECTION(std::string{"tinyply ("} + formatToString(format) + ')')
+  {
+    TemporaryFile tf = writeTinyply(mesh, format);
     REQUIRE(bool(tf));
     tf.stream().flush();
 

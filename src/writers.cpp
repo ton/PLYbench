@@ -8,6 +8,7 @@
 #include <happly/happly.h>
 #include <miniply/miniply.h>
 #include <rply/rply.h>
+#include <tinyply/source/tinyply.h>
 #include <vcglib/wrap/nanoply/include/nanoply.hpp>
 #include <vcglib/wrap/ply/plylib.h>
 
@@ -214,6 +215,24 @@ TemporaryFile writeRPly(const TriangleMesh &mesh, Format format)
 
     ply_close(ply);
   }
+
+  return tf;
+}
+
+TemporaryFile writeTinyply(const TriangleMesh &mesh, Format format)
+{
+  TemporaryFile tf;
+
+  tinyply::PlyFile outFile;
+  outFile.add_properties_to_element(
+      "vertex", {"x", "y", "z"}, tinyply::Type::FLOAT32, mesh.vertices.size(),
+      reinterpret_cast<uint8_t *>(const_cast<Vertex *>(mesh.vertices.data())),
+      tinyply::Type::INVALID, 0);
+  outFile.add_properties_to_element(
+      "face", {"vertex_indices"}, tinyply::Type::UINT32, mesh.triangles.size(),
+      reinterpret_cast<uint8_t *>(const_cast<Triangle *>(mesh.triangles.data())),
+      tinyply::Type::UINT8, 3);
+  outFile.write(tf.stream(), format != Format::Ascii);
 
   return tf;
 }

@@ -12,3 +12,4 @@ std::optional<TriangleMesh> parseNanoPly(const std::string &filename);
 std::optional<TriangleMesh> parsePlyLib(const std::string &filename);
 std::optional<TriangleMesh> parsePlywoot(const std::string &filename);
 std::optional<TriangleMesh> parseRPly(const std::string &filename);
+std::optional<TriangleMesh> parseTinyply(const std::string &filename);

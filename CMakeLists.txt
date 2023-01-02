@@ -42,6 +42,7 @@ add_library(msh_ply OBJECT
 # and unit test applications.
 add_library(PLYbench OBJECT
   submodules/miniply/miniply.cpp
+  submodules/tinyply/source/tinyply.cpp
   submodules/vcglib/wrap/ply/plylib.cpp
   src/parsers.cpp
   src/util.cpp

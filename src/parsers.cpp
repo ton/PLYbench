@@ -7,12 +7,14 @@
 #include <happly/happly.h>
 #include <miniply/miniply.h>
 #include <rply/rply.h>
+#include <tinyply/source/example-utils.hpp>
+#include <tinyply/source/tinyply.h>
+#include <vcglib/wrap/nanoply/include/nanoply.hpp>
 #include <vcglib/wrap/ply/plylib.h>
 
 #include <memory>
 #include <optional>
 #include <string>
-#include <vcglib/wrap/nanoply/include/nanoply.hpp>
 #include <vector>
 
 std::optional<TriangleMesh> parseHapply(const std::string &filename)
@@ -323,6 +325,35 @@ std::optional<TriangleMesh> parseRPly(const std::string &filename)
   if (!ply_read(ply)) { return std::nullopt; }
 
   ply_close(ply);
+
+  return mesh;
+}
+
+std::optional<TriangleMesh> parseTinyply(const std::string &filename)
+{
+  using namespace tinyply;
+
+  std::ifstream ifs(filename);
+
+  std::vector<uint8_t> buffer = read_file_binary(filename);
+  memory_stream is{(char *)buffer.data(), buffer.size()};
+
+  PlyFile file;
+  file.parse_header(is);
+
+  const std::shared_ptr<PlyData> vertices =
+      file.request_properties_from_element("vertex", {"x", "y", "z"});
+  const std::shared_ptr<PlyData> triangles =
+      file.request_properties_from_element("face", {"vertex_indices"}, 3);
+
+  file.read(is);
+
+  TriangleMesh mesh;
+  mesh.vertices.resize(vertices->count);
+  mesh.triangles.resize(triangles->count);
+
+  std::memcpy(mesh.vertices.data(), vertices->buffer.get(), vertices->buffer.size_bytes());
+  std::memcpy(mesh.triangles.data(), triangles->buffer.get(), triangles->buffer.size_bytes());
 
   return mesh;
 }

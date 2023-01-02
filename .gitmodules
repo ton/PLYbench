@@ -10,3 +10,6 @@
 [submodule "submodules/vcglib"]
 	path = submodules/vcglib
 	url = https://github.com/cnr-isti-vclab/vcglib
+[submodule "submodules/tinyply"]
+	path = submodules/tinyply
+	url = https://github.com/ddiakopoulos/tinyply
