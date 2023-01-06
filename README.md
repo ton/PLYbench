@@ -1,6 +1,6 @@
 # PLYbench
 
-This project provides a command-line application that benchmarks parsing various 3D PLY models using different PLY parsing libraries. The benchmarks all populate a similar triangle mesh data structure. The benchmark tool uses Google Benchmark to ensure a proper benchmark approach is taken.
+This project provides a command-line application that benchmarks parsing and writing of PLY model data using different PLY parsing libraries. The benchmarks all populate a similar triangle mesh data structure. The benchmark tool uses Google Benchmark to ensure a proper benchmark approach is taken.
 
 ## Introduction
 
@@ -9,6 +9,7 @@ PLYbench implements two sets of benchmarks, one set benchmarks parse performance
 These benchmarks were designed with the assumption that the target language in which the parser libraries are used is C++. Hence, the triangle mesh type that is used in the benchmark uses C++ types behind the scenes. It roughly has the following form:
 
 ```cpp
+#include <cstdint>
 #include <vector>
 
 struct Triangle
@@ -31,39 +32,86 @@ struct TriangleMesh
 };
 ```
 
-This puts some of the C PLY libraries at a slight disadvantage, since using those libraries to fill the triangle mesh incurs some additional overhead in the form of copying data from the C data structures into the mesh data structure. In practice, this is usually only a small part of the overall time required to parse a model.
+This puts some of the PLY libraries implemented in C at a slight disadvantage, since using those libraries incurs some additional overhead in the form of copying data from the C data structures into the mesh data structure. In practice, this is usually only a small part of the overall time required to parse a model.
 
 ## Benchmark results
 
-The following results were obtained on an AMD Ryzen 5 3600 6-Core processor using a Kingston A2000 NVMe SSD. PLYbench was compiled using GCC 12.2, with optimization level `-O2`.
+The following results were obtained on an AMD Ryzen 5 3600 6-Core processor using a Kingston A2000 NVMe SSD. PLYbench was compiled using GCC 12.2, with optimization level `-O2`. For each PLY library, an attempt was made to implement the most efficient way to either parser or write a PLY model. Some libraries support defining known list sizes for example to speed up parsing. It may be possible though that for some of the libraries, improvements are possible; pull requests are welcome!
 
 For more information on the models that were used, see the [Models](https://github.com/ton/PLYbench#models) section. For more information on the PLY libraries that were benchmarked, see the [PLY libraries](https://github.com/ton/PLYbench#ply-libraries) section.
 
 ### Parse benchmark results
 
-The following lists the average relative read performance of each PLY library averaged over all models that were used in the benchmarks.
+The following lists the average relative read performance of each PLY library averaged over all models that were used in the benchmarks, per PLY format type:
 
-| Library name                                                               | Relative parser performance, with the fastest library used as the base |
-|:--------------------------------------------------------------------------:|:----------------------------------------------------------------------:|
-| [PLYwoot](https://github.com/ton/plywoot)                                  | *1.0* (fastest)
-| [hapPLY](https://github.com/nmwsharp/happly)                               | 
-| [miniply](https://github.com/vilya/miniply)                                |
-| [msh_ply](https://github.com/mhalber/msh)                                  |
-| [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) |
-| [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      |
-| [RPly](https://w3.impa.br/~diego/software/rply/)                           |
-| [tinyply](https://github.com/ddiakopoulos/tinyply)                         |      (slowest)
+|   | Library name                                                               | ASCII         |
+|:-:|:--------------------------------------------------------------------------:|:-------------:|
+| 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | 1.00          |
+| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.78x slower  |
+| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 5.64x slower  |
+| 4 | [RPly](https://w3.impa.br/~diego/software/rply/)                           | 7.12x slower  |
+| 5 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 11.05x slower |
+| 6 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 11.15x slower |
+| 7 | [hapPLY](https://github.com/nmwsharp/happly)                               | 41.54x slower |
 
-The following graph plots average CPU time per model per PLY library:
+|   | Library name                                                               | Binary little endian |
+|:-:|:--------------------------------------------------------------------------:|:--------------------:|
+| 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | 1.00                 |
+| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.14x slower         |
+| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 1.78x slower         |
+| 4 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 2.44x slower         |
+| 5 | [tinyply](https://github.com/ddiakopoulos/tinyply)                         | 8.40x slower         |
+| 6 | [RPly](https://w3.impa.br/~diego/software/rply/)                           | 10.57x slower        |
+| 7 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 10.94x slower        |
+| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 15.13x slower        |
+
+|   | Library name                                                               | Binary big endian    |
+|:-:|:--------------------------------------------------------------------------:|:--------------------:|
+| 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | 1.00                 |
+| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.76x slower         |
+| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 1.81x slower         |
+| 4 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 2.40x slower         |
+| 5 | [tinyply](https://github.com/ddiakopoulos/tinyply)                         | 5.01x slower         |
+| 6 | [RPly](https://w3.impa.br/~diego/software/rply/)                           | 6.47x slower         |
+| 7 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 8.00x slower         |
+| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 9.04x slower         |
+
+The following graph plots average CPU time per model per PLY library (lower numbers are better):
 
 ![Parse CPU time](assets/parse_cpu_time.png "Parse CPU time")
 
-![Parse transfer speed](assets/parse_transfer_speed.png "Parse transfer speed")
+The following graph plots average transfer speeds in MiB per second for parsing per model per PLY library (higher numbers are better):
 
+![Parse transfer speed](assets/parse_transfer_speed.png "Parse transfer speed")
 
 ### Write benchmark results
 
+The following lists the average relative write performance of each PLY library averaged per PLY format type, note that only binary little endian is tested as a binary output format in this case:
+
+|   | Library name                                                               | ASCII         |
+|:-:|:--------------------------------------------------------------------------:|:-------------:|
+| 1 | [RPly](https://w3.impa.br/~diego/software/rply/)                           | 1.00          |
+| 2 | [msh_ply](https://github.com/mhalber/msh)                                  | 1.07x slower  |
+| 3 | [PLYwoot](https://github.com/ton/plywoot)                                  | 1.16x slower  |
+| 4 | [tinyply](https://github.com/ddiakopoulos/tinyply)                         | 1.31x slower  |
+| 5 | [hapPLY](https://github.com/nmwsharp/happly)                               | 1.34x slower  |
+| 6 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 1.51x slower  |
+
+|   | Library name                                                               | Binary little endian |
+|:-:|:--------------------------------------------------------------------------:|:--------------------:|
+| 1 | [msh_ply](https://github.com/mhalber/msh)                                  | 1.00                 |
+| 2 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 1.97x slower         |
+| 3 | [tinyply](https://github.com/ddiakopoulos/tinyply)                         | 3.66x slower         |
+| 4 | [RPly](https://w3.impa.br/~diego/software/rply/)                           | 3.84x slower         |
+| 5 | [PLYwoot](https://github.com/ton/plywoot)                                  | 5.20x slower         |
+| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 7.14x slower         |
+
+The following graph plots average CPU time for writing a fixed triangle mesh with 100k semi-random triangles per PLY library (lower numbers are better):
+
 ![Write CPU time](assets/write_cpu_time.png "Write CPU time")
+
+The following graph plots average transfer speeds in MiB per second for writing per PLY format type, per PLY library (higher numbers are better):
+
 ![Write transfer speed](assets/write_transfer_speed.png "Write transfer speed")
 
 ## Conclusions
@@ -85,23 +133,23 @@ The following PLY libraries are included in the benchmarks:
 
 Notes:
 
-1. At the time of writing, tinyply 2.3 seems to have issues reading ASCII files (https://github.com/ddiakopoulos/tinyply/issues/59), benchmarking ASCII models was therefore disabled for tinyply.
-2. miniply and plylib do not directly support writing PLY files, and are therefore excluded from the write benchmarks.
+1. At the time of writing, tinyply 2.3 seems to have issues reading ASCII files (https://github.com/ddiakopoulos/tinyply/issues/59). Benchmarking ASCII models was therefore disabled for tinyply.
+2. Miniply and plylib do not (directly) support writing PLY files, and are therefore excluded from the write benchmarks.
 
 ## Models
 
 The following models are used in the benchmarks:
 
-| Model name            | Format               | #Vertices   | #Triangles | Source |
+| Model name            | PLY format type      | #Vertices   | #Triangles | Source |
 |:---------------------:|:--------------------:|:-----------:|:----------:|:------:|
-| Stanford Bunny        | ASCII                | 35947       | 69451      | [Stanford 3D Scaning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
-| Dragon                | ASCII                | 437645      | 871414     | [Stanford 3D Scaning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
-| Happy Buddha          | ASCII                | 543652      | 1087716    | [Stanford 3D Scaning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
-| Lucy                  | Binary big endian    | 14027872    | 28055742   | [Stanford 3D Scaning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
-| Asian Dragon          | Binary big endian    | 3609600     | 7219045    | [Stanford 3D Scaning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
+| Stanford Bunny        | ASCII                | 35947       | 69451      | [Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
+| Dragon                | ASCII                | 437645      | 871414     | [Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
+| Happy Buddha          | ASCII                | 543652      | 1087716    | [Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
+| Lucy                  | Binary big endian    | 14027872    | 28055742   | [Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
+| Asian Dragon          | Binary big endian    | 3609600     | 7219045    | [Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
 | DOOM Combat Scene     | Binary little endian | 1612868     | 3224192    | [Artec3D](https://www.artec3d.com/3d-models/doom-combat-scene)
 
-The PLY models are not included in the repository. Use `scripts/download_models.py` to download the models used in the benchmarks and to be able to [reproduce the benchmark results]().
+The PLY models are not included in the repository. Use `scripts/download_models.py` to download the models used in the benchmarks and to be able to [reproduce the benchmark results](https://github.com/ton/PLYbench#reproducing-the-benchmark-results).
 
 ## Reproducing the benchmark results
 
@@ -126,6 +174,14 @@ Note that to be able to reproduce the parse performance of PLYwoot for ASCII mod
 * [fast_float](https://github.com/fastfloat/fast_float)
 * [fast_int](https://github.com/ton/fast_int)
 
+To be able to use the script that downloads the PLY input models, Python 3 is required:
+
+* [Python 3](https://www.python.org)
+
+Finally, to be able to render the graphs, next to Python 3, Matplotlib is required:
+
+* [Matplotlib](https://matplotlib.org/)
+
 ### Running the benchmarks
 
 To be able to run the benchmarks on your own PC, you will first need to download the PLY models that are used as inputs for the various benchmarks. The PLY models are not included in the repository. The `scripts/` directory contains a script to download the models though, use as follows:
@@ -134,7 +190,7 @@ To be able to run the benchmarks on your own PC, you will first need to download
 $ scripts/download_models.py
 ```
 
-This should download all models used in the benchmarks. The models will be stored in `models/`. Subsequently, after all required [dependencies]() have been met, build PLYbench using CMake:
+This should download all models used in the benchmarks. The models will be stored in `models/`. Subsequently, after all required [dependencies](https://github.com/ton/PLYbench#dependencies) have been met, build PLYbench using CMake:
 
 ```
 $ ./configure && ninja -C build -v
