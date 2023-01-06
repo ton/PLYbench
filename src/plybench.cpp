@@ -201,16 +201,16 @@ static void BM_WriteTinyply(benchmark::State &state, Format format)
   BENCHMARK_CAPTURE(BM_ParsePlyLib, name, (filename))->Unit(benchmark::kMillisecond);            \
   BENCHMARK_CAPTURE(BM_ParseRPly, name, (filename))->Unit(benchmark::kMillisecond);
 
-BENCHMARK_PARSE("Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")
-BENCHMARK_CAPTURE(BM_ParseTinyply, "Asian Dragon (binary b/e)", "models/xyzrgb_dragon.ply")
+BENCHMARK_PARSE("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
+BENCHMARK_CAPTURE(BM_ParseTinyply, "Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
     ->Unit(benchmark::kMillisecond);
 
-BENCHMARK_PARSE("Lucy (binary b/e)", "models/lucy.ply");
-BENCHMARK_CAPTURE(BM_ParseTinyply, "Lucy (binary b/e)", "models/lucy.ply")
+BENCHMARK_PARSE("Lucy (binary big endian)", "models/lucy.ply");
+BENCHMARK_CAPTURE(BM_ParseTinyply, "Lucy (binary big endian)", "models/lucy.ply")
     ->Unit(benchmark::kMillisecond);
 
-BENCHMARK_PARSE("DOOM Combat Scene (binary l/e)", "models/Doom combat scene.ply");
-BENCHMARK_CAPTURE(BM_ParseTinyply, "DOOM Combat Scene (binary l/e)", "models/Doom combat scene.ply")
+BENCHMARK_PARSE("DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
+BENCHMARK_CAPTURE(BM_ParseTinyply, "DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply")
     ->Unit(benchmark::kMillisecond);
 
 BENCHMARK_PARSE("Dragon (ASCII)", "models/dragon_vrip.ply");
