@@ -4,7 +4,6 @@ import argparse
 import json
 import matplotlib.pyplot
 import numpy
-import subprocess
 import sys
 
 dpi = 163
