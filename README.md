@@ -126,7 +126,7 @@ The following PLY libraries are included in the benchmarks:
 | [miniply](https://github.com/vilya/miniply)                                | C++      | ✓           | [Vilya Harvey](https://github.com/vilya)                |
 | [msh_ply](https://github.com/mhalber/msh)                                  | C        |             | [Maciej Halber](https://github.com/mhalber)             |
 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | C++      | ✓           | [vcglib](https://github.com/cnr-isti-vclab/vcglib)      |
-| [PLYwoot](https://github.com/ton/plywoot)                                  | C++      | ✓           | [Ton van den Heuvel](https:://github.com/ton)           |
+| [PLYwoot](https://github.com/ton/plywoot)                                  | C++      | ✓           | [Ton van den Heuvel](https://github.com/ton)            |
 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | C++      |             | [vcglib](https://github.com/cnr-isti-vclab/vcglib)      |
 | [RPly](https://w3.impa.br/~diego/software/rply/)                           | C        |             | [Diego Nehab](http://w3.impa.br/~diego/index.html)      |
 | [tinyply](https://github.com/ddiakopoulos/tinyply)                         | C++      | ✓           | [Dimitri Diakopoulos](https://github.com/ddiakopoulosj) |
