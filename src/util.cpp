@@ -1,13 +1,19 @@
 #include "util.h"
 
+#include <numeric>
+
 #include <stdlib.h>
 
-TriangleMesh createMesh()
+TriangleMesh createMesh(std::int32_t numTriangles)
 {
-  constexpr std::int32_t numTriangles = 1000;
-
   Triangles triangles;
-  Vertices vertices(2 + numTriangles);
+
+  Vertices vertices;
+  vertices.reserve(2 + numTriangles);
+  for (std::size_t i = 0; i < 2 + numTriangles; ++i)
+  {
+    vertices.push_back(Vertex{i / 2.0f, (i + 1) / 2.0f, (i + 2) / 2.0f});
+  }
 
   for (std::int32_t i = 0; i < numTriangles; ++i)
   {

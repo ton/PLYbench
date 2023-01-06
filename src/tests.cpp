@@ -146,7 +146,7 @@ TEST_CASE("Test functionality of various writer libraries")
 {
   auto format = GENERATE(Format::Ascii, Format::BinaryLittleEndian);
 
-  const TriangleMesh mesh = createMesh();
+  const TriangleMesh mesh = createMesh(1000);
 
   SECTION(std::string{"hapPLY ("} + formatToString(format) + ')')
   {

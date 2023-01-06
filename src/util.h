@@ -2,11 +2,12 @@
 
 #include "mesh.h"
 
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <string>
 
-TriangleMesh createMesh();
+TriangleMesh createMesh(std::int32_t numTriangles);
 
 std::filesystem::path uniquePath();
 

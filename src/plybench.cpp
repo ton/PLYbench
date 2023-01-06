@@ -9,6 +9,7 @@
 
 namespace
 {
+  constexpr std::int32_t writeNumTriangles = 100000;
   std::size_t meshSizeInBytes(const TriangleMesh &mesh)
   {
     return mesh.triangles.size() * sizeof(Triangle) + mesh.vertices.size() * sizeof(Vertex);
@@ -34,7 +35,7 @@ static void BM_WriteHapply(benchmark::State &state, Format format)
 {
   benchmark::ClobberMemory();
 
-  const TriangleMesh mesh{createMesh()};
+  const TriangleMesh mesh{createMesh(writeNumTriangles)};
   for (auto _ : state) { writeHapply(mesh, format); }
 
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
@@ -72,7 +73,7 @@ static void BM_WriteMshPly(benchmark::State &state, Format format)
 {
   benchmark::ClobberMemory();
 
-  const TriangleMesh mesh{createMesh()};
+  const TriangleMesh mesh{createMesh(writeNumTriangles)};
   for (auto _ : state) { writeMshPly(mesh, format); }
 
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
@@ -96,7 +97,7 @@ static void BM_WriteNanoPly(benchmark::State &state, Format format)
 {
   benchmark::ClobberMemory();
 
-  const TriangleMesh mesh{createMesh()};
+  const TriangleMesh mesh{createMesh(writeNumTriangles)};
   for (auto _ : state) { writeNanoPly(mesh, format); }
 
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
@@ -120,7 +121,7 @@ static void BM_WritePlywoot(benchmark::State &state, Format format)
 {
   benchmark::ClobberMemory();
 
-  const TriangleMesh mesh{createMesh()};
+  const TriangleMesh mesh{createMesh(writeNumTriangles)};
   for (auto _ : state) { writePlywoot(mesh, format); }
 
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
@@ -158,7 +159,7 @@ static void BM_WriteRPly(benchmark::State &state, Format format)
 {
   benchmark::ClobberMemory();
 
-  const TriangleMesh mesh{createMesh()};
+  const TriangleMesh mesh{createMesh(writeNumTriangles)};
   for (auto _ : state) { writeRPly(mesh, format); }
 
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
@@ -182,7 +183,7 @@ static void BM_WriteTinyply(benchmark::State &state, Format format)
 {
   benchmark::ClobberMemory();
 
-  const TriangleMesh mesh{createMesh()};
+  const TriangleMesh mesh{createMesh(writeNumTriangles)};
   for (auto _ : state) { writeTinyply(mesh, format); }
 
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
