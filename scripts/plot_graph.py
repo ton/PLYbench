@@ -3,7 +3,6 @@
 import argparse
 import json
 import matplotlib.pyplot
-import numpy
 import sys
 
 dpi = 163
@@ -62,19 +61,19 @@ def render_graph(benchmarks, output_png_file, benchmark_metric, benchmark_parser
     model_names = sorted(list(set([model_name for _, model_name in cpu_times_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(width / dpi, height / dpi))
-    x = numpy.arange(len(model_names))
+    x_offset = list(range(len(model_names)))
 
     bar_width = bars_width / len(benchmark_parser_names)
-    offset = -0.5 * bars_width
+    bar_offset = -0.5 * bars_width
 
     for benchmark_name, parser_name in benchmark_parser_names.items():
         cpu_times = [cpu_times_by_parser_and_model.get((benchmark_name, model_name), float("NaN")) for model_name in model_names]
-        rect = ax.bar(x + offset, cpu_times, bar_width, label=parser_name)
-        offset += bar_width
+        rect = ax.bar(list(map(lambda x : x + bar_offset, x_offset)), cpu_times, bar_width, label=parser_name)
+        bar_offset += bar_width
         ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize, rotation=70)
 
     ax.set_title(title, fontsize=title_fontsize)
-    ax.set_xticks(x, model_names)
+    ax.set_xticks(x_offset, model_names)
     ax.set_ylabel(ylabel, fontsize=ylabel_fontsize)
     ax.tick_params(axis='both', labelsize=ticks_fontsize)
     ax.legend(fontsize=legend_fontsize)
