@@ -44,17 +44,7 @@ For more information on the models that were used, see the [Models](https://gith
 
 The following lists the average relative read performance of each PLY library averaged over all models that were used in the benchmarks, per PLY format type:
 
-| # | Library name                                                               | Overall        | ASCII          | Binary big endian | Binary little endian |
-|:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:-----------------:|:--------------------:|
-| 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | *1.00*         | *1.00*         | *1.00*            | *1.00*               |
-| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.66x slower   | 1.78x slower   | 1.76x slower      | 1.14x slower         |
-| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 3.59x slower   | 5.64x slower   | 1.81x slower      | 1.78x slower         |
-| 4 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 6.14x slower   | N/A            | 5.01x slower      | 8.40x slower         |
-| 5 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 6.49x slower   | 11.15x slower  | 2.40x slower      | 2.44x slower         |
-| 6 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 8.04x slower   | 7.12x slower   | 8.00x slower      | 10.57x slower        |
-| 7 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 9.40x slower   | 11.05x slower  | 6.47x slower      | 10.94x slower        |
-| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 25.29x slower  | 41.54x slower  | 9.04x slower      | 15.13x slower        |
-
+${parse_results_table}
 
 The following graph plots average CPU time per model per PLY library (lower numbers are better):
 
@@ -68,15 +58,7 @@ The following graph plots average transfer speeds in MiB per second for parsing 
 
 The following lists the average relative write performance of each PLY library averaged per PLY format type, note that only binary little endian is tested as a binary output format in this case:
 
-| # | Library name                                                               | Overall        | ASCII          | Binary little endian |
-|:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:--------------------:|
-| 1 | [msh_ply](https://github.com/mhalber/msh)                                  | *1.00*         | 1.07x slower   | *1.00*               |
-| 2 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 1.68x slower   | 1.51x slower   | 1.97x slower         |
-| 3 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 2.35x slower   | *1.00*         | 3.84x slower         |
-| 4 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 2.41x slower   | 1.31x slower   | 3.66x slower         |
-| 5 | [PLYwoot](https://github.com/ton/plywoot)                                  | 3.08x slower   | 1.16x slower   | 5.20x slower         |
-| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 4.11x slower   | 1.34x slower   | 7.14x slower         |
-
+${write_results_table}
 
 The following graph plots average CPU time for writing a fixed triangle mesh with 100k semi-random triangles per PLY library (lower numbers are better):
 
@@ -159,19 +141,19 @@ Finally, to be able to render the graphs, next to Python 3, Matplotlib is requir
 To be able to run the benchmarks on your own PC, you will first need to download the PLY models that are used as inputs for the various benchmarks. The PLY models are not included in the repository. The `scripts/` directory contains a script to download the models though, use as follows:
 
 ```
-$ scripts/download_models.py
+$$ scripts/download_models.py
 ```
 
 This should download all models used in the benchmarks. The models will be stored in `models/`. Subsequently, after all required [dependencies](https://github.com/ton/PLYbench#dependencies) have been met, build PLYbench using CMake:
 
 ```
-$ ./configure && ninja -C build -v
+$$ ./configure && ninja -C build -v
 ```
 
 Finally, run the benchmarks as follows:
 
 ```
-$ build/plybench --benchmark_out=benchmarks.json --benchmark_out_format=json
+$$ build/plybench --benchmark_out=benchmarks.json --benchmark_out_format=json
 ```
 
 ### Generating the graphs
@@ -179,7 +161,7 @@ $ build/plybench --benchmark_out=benchmarks.json --benchmark_out_format=json
 The generated JSON file `benchmarks.json` can be used as an input for `scripts/plot_graph.py` to render various graphs. For example, to generate the the parse CPU times graph:
 
 ```
-$ cat benchmarks.json | scripts/plot_graph.py -o parse_cpu_time.png -t parse_cpu_time
+$$ cat benchmarks.json | scripts/plot_graph.py -o parse_cpu_time.png -t parse_cpu_time
 ```
 
 See `scripts/plot_graph.py -h` for more details.
