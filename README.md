@@ -47,13 +47,13 @@ The following lists the average relative read performance of each PLY library av
 | # | Library name                                                               | Overall        | ASCII          | Binary big endian | Binary little endian |
 |:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:-----------------:|:--------------------:|
 | 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | *1.00*         | *1.00*         | *1.00*            | *1.00*               |
-| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.66x slower   | 1.78x slower   | 1.76x slower      | 1.14x slower         |
-| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 3.59x slower   | 5.64x slower   | 1.81x slower      | 1.78x slower         |
-| 4 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 6.14x slower   | N/A            | 5.01x slower      | 8.40x slower         |
-| 5 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 6.49x slower   | 11.15x slower  | 2.40x slower      | 2.44x slower         |
-| 6 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 8.04x slower   | 7.12x slower   | 8.00x slower      | 10.57x slower        |
-| 7 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 9.40x slower   | 11.05x slower  | 6.47x slower      | 10.94x slower        |
-| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 25.29x slower  | 41.54x slower  | 9.04x slower      | 15.13x slower        |
+| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.68x slower   | 1.75x slower   | 1.87x slower      | 1.12x slower         |
+| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 3.94x slower   | 6.17x slower   | 2.08x slower      | 1.77x slower         |
+| 4 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 6.27x slower   | N/A            | 5.24x slower      | 8.34x slower         |
+| 5 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 6.76x slower   | 11.64x slower  | 2.50x slower      | 2.48x slower         |
+| 6 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 8.25x slower   | 7.29x slower   | 8.41x slower      | 10.42x slower        |
+| 7 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 9.68x slower   | 11.41x slower  | 6.73x slower      | 11.05x slower        |
+| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 26.27x slower  | 43.05x slower  | 9.68x slower      | 15.40x slower        |
 
 
 The following graph plots average CPU time per model per PLY library (lower numbers are better):
@@ -68,14 +68,14 @@ The following graph plots average transfer speeds in MiB per second for parsing 
 
 The following lists the average relative write performance of each PLY library averaged per PLY format type, note that only binary little endian is tested as a binary output format in this case:
 
-| # | Library name                                                               | Overall        | ASCII          | Binary little endian |
-|:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:--------------------:|
-| 1 | [msh_ply](https://github.com/mhalber/msh)                                  | *1.00*         | 1.07x slower   | *1.00*               |
-| 2 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 1.68x slower   | 1.51x slower   | 1.97x slower         |
-| 3 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 2.35x slower   | *1.00*         | 3.84x slower         |
-| 4 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 2.41x slower   | 1.31x slower   | 3.66x slower         |
-| 5 | [PLYwoot](https://github.com/ton/plywoot)                                  | 3.08x slower   | 1.16x slower   | 5.20x slower         |
-| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 4.11x slower   | 1.34x slower   | 7.14x slower         |
+| # | Library name                                                               | Overall        | ASCII          | Binary         |
+|:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:--------------:|
+| 1 | [msh_ply](https://github.com/mhalber/msh)                                  | *1.00*         | 1.12x slower   | *1.00*         |
+| 2 | [PLYwoot](https://github.com/ton/plywoot)                                  | 1.30x slower   | *1.00*         | 1.76x slower   |
+| 3 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 1.68x slower   | 1.56x slower   | 2.00x slower   |
+| 4 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 2.24x slower   | 1.02x slower   | 3.74x slower   |
+| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 2.38x slower   | 1.34x slower   | 3.71x slower   |
+| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 4.07x slower   | 1.39x slower   | 7.23x slower   |
 
 
 The following graph plots average CPU time for writing a fixed triangle mesh with 100k semi-random triangles per PLY library (lower numbers are better):
@@ -134,6 +134,7 @@ To be able to build PLYbench, the following dependencies are required:
 * [CMake](https://cmake.org/)
 * [Ninja](https://ninja-build.org/)
 * [Benchmark](https://github.com/google/benchmark)
+* [PLYwoot](https://github.com/ton/plywoot)
 
 Note that instead of Ninja a different build tool may be used (regular Make for example), but the `configure` script assumes Ninja is present on the system right now.
 
@@ -141,7 +142,7 @@ To be able to build the unit tests, the following dependency is required:
 
 * [Catch2](https://github.com/catchorg/Catch2)
 
-Note that to be able to reproduce the parse performance of PLYwoot for ASCII models, the following dependencies are required as well:
+Note that to be able to reproduce the parse performance of PLYwoot for ASCII models, it is recommend to install the following dependencies as well:
 
 * [fast_float](https://github.com/fastfloat/fast_float)
 * [fast_int](https://github.com/ton/fast_int)
