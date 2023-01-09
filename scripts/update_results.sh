@@ -16,7 +16,7 @@ build/plybench --benchmark_out="$json_file" --benchmark_out_format=json --benchm
 
 # Generating graphs.
 scripts/plot_graph.py -i "$json_file" -o assets/parse_cpu_time.png -t parse_cpu_time
-scripts/plot_graph.py -i "$json_file" -o assets/write_cpu_time.png -t parse_cpu_time
+scripts/plot_graph.py -i "$json_file" -o assets/write_cpu_time.png -t write_cpu_time
 scripts/plot_graph.py -i "$json_file" -o assets/parse_transfer_speed.png -t parse_transfer_speed
 scripts/plot_graph.py -i "$json_file" -o assets/write_transfer_speed.png -t write_transfer_speed
 
