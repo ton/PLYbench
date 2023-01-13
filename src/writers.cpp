@@ -166,9 +166,7 @@ TemporaryFile writePlywoot(const TriangleMesh &mesh, Format format)
   const plywoot::PlyElement faceElement{"face", mesh.triangles.size(), {faceIndices}};
 
   using TriangleLayout = plywoot::reflect::Layout<plywoot::reflect::Array<int, 3>>;
-  // TODO(ton): using plywoot::reflect::Pack<float, 3> results in an invalid
-  // mesh...
-  using VertexLayout = plywoot::reflect::Layout<float, float, float>;
+  using VertexLayout = plywoot::reflect::Layout<plywoot::reflect::Pack<float, 3>>;
 
   std::vector<Triangle> triangles;
   plyos.add(vertexElement, VertexLayout{mesh.vertices});
