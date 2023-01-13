@@ -60,7 +60,7 @@ The following lists the average relative write performance of each PLY library a
 
 ${write_results_table}
 
-The following graph plots average CPU time for writing a fixed triangle mesh with 100k semi-random triangles per PLY library (lower numbers are better):
+The following graph plots average CPU time for writing a fixed triangle mesh with 100.000 semi-random triangles per PLY library (lower numbers are better):
 
 ![Write CPU time](assets/write_cpu_time.png "Write CPU time")
 
