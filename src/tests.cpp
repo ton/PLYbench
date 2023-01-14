@@ -13,8 +13,13 @@ std::string meshComparisonInfo(
     const std::optional<TriangleMesh> &maybeX,
     const std::optional<TriangleMesh> &maybeY,
     const std::string &lhsName,
-    const std::string &rhsName)
+    const std::string &rhsName,
+    const std::string &modelFilename)
 {
+  if (!maybeX.has_value()) { WARN(lhsName + " could not parse " + modelFilename); }
+
+  if (!maybeY.has_value()) { WARN(rhsName + " could not parse " + modelFilename); }
+
   if (bool(maybeX) != bool(maybeY)) { return "one of the meshes is undefined"; }
 
   if (maybeX && maybeY)
@@ -70,56 +75,61 @@ TEST_CASE("Verify parsers against PLYwoot")
       "xyzrgb_dragon.ply", "Doom combat scene.ply");
 
   const auto plywootMesh = parsePlywoot(std::string("models/") + filename);
+  REQUIRE(plywootMesh.has_value());
+
+  // The tests below will report a parser error through the `meshComparisonInfo`
+  // function. Only in case a mesh has been correctly parsed it is compared
+  // against the triangle mesh parsed by PLYwoot.
 
   SECTION("hapPLY")
   {
     auto mesh = parseHapply(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "hapPLY", "PLYwoot"));
-    CHECK(mesh == plywootMesh);
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "hapPLY", "PLYwoot", filename));
+    if (mesh) { CHECK(*mesh == *plywootMesh); }
   }
 
   SECTION("MiniPLY")
   {
     auto mesh = parseMiniply(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "MiniPLY", "PLYwoot"));
-    CHECK(mesh == plywootMesh);
+    INFO(
+        std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "MiniPLY", "PLYwoot", filename));
+    if (mesh) { CHECK(*mesh == *plywootMesh); }
   }
 
   SECTION("msh_ply")
   {
     auto mesh = parseMshPly(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "msh_ply", "PLYwoot"));
-    CHECK(mesh == plywootMesh);
+    INFO(
+        std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "msh_ply", "PLYwoot", filename));
+    if (mesh) { CHECK(*mesh == *plywootMesh); }
   }
 
   SECTION("nanoply")
   {
-    if (std::string(filename) != "dragon_remeshed.ply")
-    {
-      auto mesh = parseNanoPly(std::string("models/") + filename);
+    auto mesh = parseNanoPly(std::string("models/") + filename);
 
-      INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "nanoply", "PLYwoot"));
-      CHECK(mesh == plywootMesh);
-    }
+    INFO(
+        std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "nanoply", "PLYwoot", filename));
+    if (mesh) { CHECK(*mesh == *plywootMesh); }
   }
 
   SECTION("plylib")
   {
     auto mesh = parsePlyLib(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "plylib", "PLYwoot"));
-    CHECK(mesh == plywootMesh);
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "plylib", "PLYwoot", filename));
+    if (mesh) { CHECK(*mesh == *plywootMesh); }
   }
 
   SECTION("RPly")
   {
     auto mesh = parseRPly(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "RPly", "PLYwoot"));
-    CHECK(mesh == plywootMesh);
+    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "RPly", "PLYwoot", filename));
+    if (mesh) { CHECK(*mesh == *plywootMesh); }
   }
 }
 
@@ -130,10 +140,11 @@ TEST_CASE("Verify tinyply against PLYwoot")
   auto filename = GENERATE("dragon_remeshed.ply", "lucy.ply", "xyzrgb_dragon.ply", "Doom combat scene.ply");
 
   const auto plywootMesh = parsePlywoot(std::string("models/") + filename);
+  REQUIRE(plywootMesh.has_value());
 
   auto mesh = parseTinyply(std::string("models/") + filename);
 
-  INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "tinyply", "PLYwoot"));
+  INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "tinyply", "PLYwoot", filename));
   CHECK(mesh == plywootMesh);
 }
 
