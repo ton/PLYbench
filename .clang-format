@@ -2,11 +2,12 @@
 BasedOnStyle: Google
 Language: Cpp
 
-NamespaceIndentation: All
+CompactNamespaces: true
+NamespaceIndentation: None
 FixNamespaceComments: false
 
 AccessModifierOffset: -2
-ColumnLimit: 100
+ColumnLimit: 110
 
 AlignAfterOpenBracket: AlwaysBreak
 AlignEscapedNewlines: Right
@@ -23,19 +24,28 @@ BinPackParameters: false
 DerivePointerAlignment: false
 PointerAlignment: Right
 
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterNamespace: false
+  AfterClass: true
+  AfterFunction: true
+  AfterStruct: true
+  AfterControlStatement: Always
+  BeforeElse: true
 
 KeepEmptyLinesAtTheStartOfBlocks: false
 
 SpaceAfterTemplateKeyword: false
 
+PenaltyReturnTypeOnItsOwnLine: 1000
+
 IncludeBlocks: Regroup
 IncludeCategories:
     - Regex:  '^".*"'
       Priority: 1
-    - Regex:  '^<plywoot/.*>'
+    - Regex:  '^<.*/.*>'
       Priority: 2
-    - Regex:  '^<catch2/.*>'
+    - Regex:  '^<[^.]*>'
       Priority: 3
     - Regex:  '^<.*\.(h|hpp)>'
       Priority: 4

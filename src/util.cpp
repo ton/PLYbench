@@ -15,10 +15,7 @@ TriangleMesh createMesh(std::int32_t numTriangles)
     vertices.push_back(Vertex{i / 2.0f, (i + 1) / 2.0f, (i + 2) / 2.0f});
   }
 
-  for (std::int32_t i = 0; i < numTriangles; ++i)
-  {
-    triangles.push_back(Triangle{i, i + 1, i + 2});
-  }
+  for (std::int32_t i = 0; i < numTriangles; ++i) { triangles.push_back(Triangle{i, i + 1, i + 2}); }
 
   return TriangleMesh{std::move(triangles), std::move(vertices)};
 }
@@ -38,10 +35,7 @@ TemporaryFile::~TemporaryFile()
   if (stream_)
   {
     stream_.close();
-    if (!keep_)
-    {
-      std::filesystem::remove(filename_);
-    }
+    if (!keep_) { std::filesystem::remove(filename_); }
   }
 }
 

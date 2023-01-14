@@ -2,10 +2,9 @@
 
 #include "msh_ply.h"
 
-#include <plywoot/plywoot.hpp>
-
 #include <happly/happly.h>
 #include <miniply/miniply.h>
+#include <plywoot/plywoot.hpp>
 #include <rply/rply.h>
 #include <tinyply/source/example-utils.hpp>
 #include <tinyply/source/tinyply.h>
@@ -57,8 +56,7 @@ std::optional<TriangleMesh> parseMiniply(const std::string &filename)
   miniply::PLYReader reader{filename.data()};
   if (!reader.valid()) { return std::nullopt; }
 
-  miniply::PLYElement *facesElem =
-      reader.get_element(reader.find_element(miniply::kPLYFaceElement));
+  miniply::PLYElement *facesElem = reader.get_element(reader.find_element(miniply::kPLYFaceElement));
   if (!facesElem) { return std::nullopt; }
 
   std::vector<std::uint32_t> listIdxs;
@@ -183,8 +181,7 @@ std::optional<TriangleMesh> parsePlyLib(const std::string &filename)
   pf.AddToRead("vertex", "x", T_FLOAT, T_FLOAT, offsetof(Vertex, x), 0, 0, 0, 0, 0);
   pf.AddToRead("vertex", "y", T_FLOAT, T_FLOAT, offsetof(Vertex, y), 0, 0, 0, 0, 0);
   pf.AddToRead("vertex", "z", T_FLOAT, T_FLOAT, offsetof(Vertex, z), 0, 0, 0, 0, 0);
-  pf.AddToRead(
-      "face", "vertex_indices", T_INT, T_INT, offsetof(Triangle, a), 1, 0, T_UCHAR, T_UCHAR, 0);
+  pf.AddToRead("face", "vertex_indices", T_INT, T_INT, offsetof(Triangle, a), 1, 0, T_UCHAR, T_UCHAR, 0);
 
   TriangleMesh mesh;
 
@@ -260,8 +257,7 @@ std::optional<TriangleMesh> parseRPly(const std::string &filename)
     if (!strcmp(name, "face")) { mesh.triangles.reserve(n); }
   }
 
-  auto readVertex = [](p_ply_argument argument)
-  {
+  auto readVertex = [](p_ply_argument argument) {
     void *pdata;
     long idata;
     ply_get_argument_user_data(argument, &pdata, &idata);
@@ -287,8 +283,7 @@ std::optional<TriangleMesh> parseRPly(const std::string &filename)
     return 1;
   };
 
-  auto readTriangle = [](p_ply_argument argument)
-  {
+  auto readTriangle = [](p_ply_argument argument) {
     void *pdata;
     ply_get_argument_user_data(argument, &pdata, NULL);
 
@@ -341,8 +336,7 @@ std::optional<TriangleMesh> parseTinyply(const std::string &filename)
   PlyFile file;
   file.parse_header(is);
 
-  const std::shared_ptr<PlyData> vertices =
-      file.request_properties_from_element("vertex", {"x", "y", "z"});
+  const std::shared_ptr<PlyData> vertices = file.request_properties_from_element("vertex", {"x", "y", "z"});
   const std::shared_ptr<PlyData> triangles =
       file.request_properties_from_element("face", {"vertex_indices"}, 3);
 

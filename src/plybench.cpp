@@ -7,14 +7,13 @@
 
 #include <cstdint>
 
-namespace
-{
-  constexpr std::int32_t writeNumTriangles = 100000;
+namespace {
+constexpr std::int32_t writeNumTriangles = 100000;
 
-  std::size_t meshSizeInBytes(const TriangleMesh &mesh)
-  {
-    return mesh.triangles.size() * sizeof(Triangle) + mesh.vertices.size() * sizeof(Vertex);
-  }
+std::size_t meshSizeInBytes(const TriangleMesh &mesh)
+{
+  return mesh.triangles.size() * sizeof(Triangle) + mesh.vertices.size() * sizeof(Vertex);
+}
 }
 
 static void BM_ParseHapply(benchmark::State &state, const std::string &filename)
@@ -195,13 +194,13 @@ static void BM_WriteTinyply(benchmark::State &state, Format format)
 
 #define TIME_UNIT benchmark::kMillisecond
 
-#define BENCHMARK_PARSE(name, filename)                                                            \
-  BENCHMARK_CAPTURE(BM_ParseHapply, name, (filename))->Unit(TIME_UNIT);                            \
-  BENCHMARK_CAPTURE(BM_ParseMiniply, name, (filename))->Unit(TIME_UNIT);                           \
-  BENCHMARK_CAPTURE(BM_ParseMshPly, name, (filename))->Unit(TIME_UNIT);                            \
-  BENCHMARK_CAPTURE(BM_ParseNanoPly, name, (filename))->Unit(TIME_UNIT);                           \
-  BENCHMARK_CAPTURE(BM_ParsePlywoot, name, (filename))->Unit(TIME_UNIT);                           \
-  BENCHMARK_CAPTURE(BM_ParsePlyLib, name, (filename))->Unit(TIME_UNIT);                            \
+#define BENCHMARK_PARSE(name, filename)                                                                      \
+  BENCHMARK_CAPTURE(BM_ParseHapply, name, (filename))->Unit(TIME_UNIT);                                      \
+  BENCHMARK_CAPTURE(BM_ParseMiniply, name, (filename))->Unit(TIME_UNIT);                                     \
+  BENCHMARK_CAPTURE(BM_ParseMshPly, name, (filename))->Unit(TIME_UNIT);                                      \
+  BENCHMARK_CAPTURE(BM_ParseNanoPly, name, (filename))->Unit(TIME_UNIT);                                     \
+  BENCHMARK_CAPTURE(BM_ParsePlywoot, name, (filename))->Unit(TIME_UNIT);                                     \
+  BENCHMARK_CAPTURE(BM_ParsePlyLib, name, (filename))->Unit(TIME_UNIT);                                      \
   BENCHMARK_CAPTURE(BM_ParseRPly, name, (filename))->Unit(TIME_UNIT);
 
 BENCHMARK_PARSE("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
@@ -212,10 +211,7 @@ BENCHMARK_PARSE("Lucy (binary big endian)", "models/lucy.ply");
 BENCHMARK_CAPTURE(BM_ParseTinyply, "Lucy (binary big endian)", "models/lucy.ply")->Unit(TIME_UNIT);
 
 BENCHMARK_PARSE("DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
-BENCHMARK_CAPTURE(
-    BM_ParseTinyply,
-    "DOOM Combat Scene (binary little endian)",
-    "models/Doom combat scene.ply")
+BENCHMARK_CAPTURE(BM_ParseTinyply, "DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply")
     ->Unit(TIME_UNIT);
 
 BENCHMARK_PARSE("Dragon (ASCII)", "models/dragon_vrip.ply");

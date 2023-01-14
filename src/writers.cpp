@@ -3,10 +3,9 @@
 #include "msh_ply.h"
 #include "util.h"
 
-#include <plywoot/plywoot.hpp>
-
 #include <happly/happly.h>
 #include <miniply/miniply.h>
+#include <plywoot/plywoot.hpp>
 #include <rply/rply.h>
 #include <tinyply/source/tinyply.h>
 #include <vcglib/wrap/nanoply/include/nanoply.hpp>
@@ -52,9 +51,7 @@ TemporaryFile writeHapply(const TriangleMesh &mesh, Format format)
   plyOut.getElement("face").addListProperty<int>("vertex_indices", indices);
 
   TemporaryFile tf;
-  plyOut.write(
-      tf.stream(),
-      format == Format::Ascii ? happly::DataFormat::ASCII : happly::DataFormat::Binary);
+  plyOut.write(tf.stream(), format == Format::Ascii ? happly::DataFormat::ASCII : happly::DataFormat::Binary);
   return tf;
 }
 
@@ -109,8 +106,7 @@ TemporaryFile writeNanoPly(const TriangleMesh &mesh, Format format)
   vertexProperty.push_back(nanoply::PlyProperty(nanoply::NNP_FLOAT32, nanoply::NNP_PXYZ));
 
   std::vector<nanoply::PlyProperty> faceProperty;
-  faceProperty.push_back(
-      nanoply::PlyProperty(nanoply::NNP_LIST_UINT8_UINT32, nanoply::NNP_FACE_VERTEX_LIST));
+  faceProperty.push_back(nanoply::PlyProperty(nanoply::NNP_LIST_UINT8_UINT32, nanoply::NNP_FACE_VERTEX_LIST));
 
   nanoply::PlyElement vertexElement(nanoply::NNP_VERTEX_ELEM, vertexProperty, mesh.vertices.size());
   nanoply::PlyElement faceElement(nanoply::NNP_FACE_ELEM, faceProperty, mesh.triangles.size());
@@ -142,10 +138,7 @@ TemporaryFile writeNanoPly(const TriangleMesh &mesh, Format format)
   info.AddPlyElement(faceElement);
   nanoply::SaveModel(info.filename, meshDescriptors, info);
 
-  for (std::size_t i = 0; i < vertex.dataDescriptor.size(); i++)
-  {
-    delete vertex.dataDescriptor[i];
-  }
+  for (std::size_t i = 0; i < vertex.dataDescriptor.size(); i++) { delete vertex.dataDescriptor[i]; }
   for (std::size_t i = 0; i < face.dataDescriptor.size(); i++) { delete face.dataDescriptor[i]; }
 
   return tf;
@@ -224,12 +217,10 @@ TemporaryFile writeTinyply(const TriangleMesh &mesh, Format format)
   tinyply::PlyFile outFile;
   outFile.add_properties_to_element(
       "vertex", {"x", "y", "z"}, tinyply::Type::FLOAT32, mesh.vertices.size(),
-      reinterpret_cast<uint8_t *>(const_cast<Vertex *>(mesh.vertices.data())),
-      tinyply::Type::INVALID, 0);
+      reinterpret_cast<uint8_t *>(const_cast<Vertex *>(mesh.vertices.data())), tinyply::Type::INVALID, 0);
   outFile.add_properties_to_element(
       "face", {"vertex_indices"}, tinyply::Type::UINT32, mesh.triangles.size(),
-      reinterpret_cast<uint8_t *>(const_cast<Triangle *>(mesh.triangles.data())),
-      tinyply::Type::UINT8, 3);
+      reinterpret_cast<uint8_t *>(const_cast<Triangle *>(mesh.triangles.data())), tinyply::Type::UINT8, 3);
   outFile.write(tf.stream(), format != Format::Ascii);
 
   return tf;

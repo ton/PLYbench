@@ -5,12 +5,7 @@
 
 #include <string>
 
-enum class Format
-{
-  Ascii,
-  BinaryLittleEndian,
-  BinaryBigEndian
-};
+enum class Format { Ascii, BinaryLittleEndian, BinaryBigEndian };
 
 inline std::string formatToString(Format format)
 {
