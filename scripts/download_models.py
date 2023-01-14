@@ -26,8 +26,8 @@ class Model:
             if self.ply_filename.endswith('.gz'):
                 self.ply_filename = Path(self.ply_filename).stem
 
-    def download(self, base_url, target_directory):
-        sys.stdout.write(f"> Downloading {self.name} from {base_url}/{self.model_url}...")
+    def download(self, target_directory):
+        sys.stdout.write(f"> Downloading {self.name} from {self.model_url}...")
         sys.stdout.flush()
 
         model_filename = os.path.join(target_directory, self.model_filename)
@@ -41,7 +41,7 @@ class Model:
             sys.stdout.write("local model archive is up to date\n")
         else:
             # Download the model archive.
-            urllib.request.urlretrieve(base_url + '/' + self.model_url, model_filename)
+            urllib.request.urlretrieve(self.model_url, model_filename)
             sys.stdout.write("done\n")
 
             # Write MD5 sum of the model archive.
@@ -68,20 +68,20 @@ class Model:
 # Download Stanford models.
 stanford_url = 'http://graphics.stanford.edu'
 
-stanford_models = [Model('Stanford Bunny', 'bunny.tar.gz', archive_ply_filename='pub/3Dscanrep/bunny/reconstruction/bun_zipper.ply'),
-                   Model('Happy Buddha', 'happy/happy_recon.tar.gz', archive_ply_filename='pub/3Dscanrep/happy_recon/happy_vrip.ply'),
-                   Model('Dragon', 'dragon/dragon_recon.tar.gz', archive_ply_filename='pub/3Dscanrep/dragon_recon/dragon_vrip.ply'),
-                   Model('Asian Dragon', 'data/3Dscanrep/xyzrgb/xyzrgb_dragon.ply.gz'),
-                   Model('Lucy', 'data/3Dscanrep/lucy.tar.gz', archive_ply_filename='lucy.ply')]
+stanford_models = [Model('Stanford Bunny', '%s/bunny.tar.gz' % stanford_url, archive_ply_filename='pub/3Dscanrep/bunny/reconstruction/bun_zipper.ply'),
+                   Model('Happy Buddha', '%s/happy/happy_recon.tar.gz' % stanford_url, archive_ply_filename='pub/3Dscanrep/happy_recon/happy_vrip.ply'),
+                   Model('Dragon', '%s/dragon/dragon_recon.tar.gz' % stanford_url, archive_ply_filename='pub/3Dscanrep/dragon_recon/dragon_vrip.ply'),
+                   Model('Asian Dragon', '%s/data/3Dscanrep/xyzrgb/xyzrgb_dragon.ply.gz' % stanford_url),
+                   Model('Lucy', '%s/data/3Dscanrep/lucy.tar.gz' % stanford_url, archive_ply_filename='lucy.ply')]
 for model in stanford_models:
-    model.download(stanford_url, 'models/')
+    model.download('models/')
 
 artec_url = 'https://cdn.artec3d.com/content-hub-3dmodels'
-artec_models = [Model('Doom Combat Scene', 'doom-combat-scene_ply.zip?VersionId=5N9bHbcyQDcBcQNbkdxjgZws2f4d3Es_', model_filename='doom-combat-scene_ply.zip', archive_ply_filename='Doom combat scene.ply')]
+artec_models = [Model('Doom Combat Scene', '%s/doom-combat-scene_ply.zip?VersionId=5N9bHbcyQDcBcQNbkdxjgZws2f4d3Es_' % artec_url, model_filename='doom-combat-scene_ply.zip', archive_ply_filename='Doom combat scene.ply')]
 for model in artec_models:
-    model.download(artec_url, 'models/')
+    model.download('models/')
 
 pbrt_v3_url = 'https://gitlab.com/zhoub/pbrt-v3-scenes/-/raw/master'
-pbrt_v3_models = [Model('PBRT-v3 Dragon', 'dragon/geometry/dragon_remeshed.ply')]
+pbrt_v3_models = [Model('PBRT-v3 Dragon', '%s/dragon/geometry/dragon_remeshed.ply' % pbrt_v3_url)]
 for model in pbrt_v3_models:
-    model.download(pbrt_v3_url, 'models/')
+    model.download('models/')
