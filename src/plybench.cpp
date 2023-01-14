@@ -189,9 +189,6 @@ static void BM_WriteTinyply(benchmark::State &state, Format format)
   state.SetBytesProcessed(state.iterations() * meshSizeInBytes(mesh));
 }
 
-// Note; tinyply 2.3 seems to be broken for ASCII
-// (https://github.com/ddiakopoulos/tinyply/issues/59)
-
 #define TIME_UNIT benchmark::kMillisecond
 
 #define BENCHMARK_PARSE(name, filename)                                                                      \
@@ -201,34 +198,38 @@ static void BM_WriteTinyply(benchmark::State &state, Format format)
   BENCHMARK_CAPTURE(BM_ParseNanoPly, name, (filename))->Unit(TIME_UNIT);                                     \
   BENCHMARK_CAPTURE(BM_ParsePlywoot, name, (filename))->Unit(TIME_UNIT);                                     \
   BENCHMARK_CAPTURE(BM_ParsePlyLib, name, (filename))->Unit(TIME_UNIT);                                      \
+  BENCHMARK_CAPTURE(BM_ParseRPly, name, (filename))->Unit(TIME_UNIT);                                        \
+  BENCHMARK_CAPTURE(BM_ParseTinyply, name, (filename))->Unit(TIME_UNIT);
+
+#define BENCHMARK_PARSE_NO_TINYPLY(name, filename)                                                           \
+  BENCHMARK_CAPTURE(BM_ParseHapply, name, (filename))->Unit(TIME_UNIT);                                      \
+  BENCHMARK_CAPTURE(BM_ParseMiniply, name, (filename))->Unit(TIME_UNIT);                                     \
+  BENCHMARK_CAPTURE(BM_ParseMshPly, name, (filename))->Unit(TIME_UNIT);                                      \
+  BENCHMARK_CAPTURE(BM_ParseNanoPly, name, (filename))->Unit(TIME_UNIT);                                     \
+  BENCHMARK_CAPTURE(BM_ParsePlywoot, name, (filename))->Unit(TIME_UNIT);                                     \
+  BENCHMARK_CAPTURE(BM_ParsePlyLib, name, (filename))->Unit(TIME_UNIT);                                      \
   BENCHMARK_CAPTURE(BM_ParseRPly, name, (filename))->Unit(TIME_UNIT);
 
 BENCHMARK_PARSE("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
-BENCHMARK_CAPTURE(BM_ParseTinyply, "Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
-    ->Unit(TIME_UNIT);
-
 BENCHMARK_PARSE("Lucy (binary big endian)", "models/lucy.ply");
-BENCHMARK_CAPTURE(BM_ParseTinyply, "Lucy (binary big endian)", "models/lucy.ply")->Unit(TIME_UNIT);
 
 BENCHMARK_PARSE("DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
-BENCHMARK_CAPTURE(BM_ParseTinyply, "DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply")
-    ->Unit(TIME_UNIT);
 
-BENCHMARK_PARSE("Dragon (ASCII)", "models/dragon_vrip.ply");
-BENCHMARK_PARSE("Happy Buddha (ASCII)", "models/happy_vrip.ply");
-BENCHMARK_PARSE("Stanford Bunny (ASCII)", "models/bun_zipper.ply");
+// Note; tinyply 2.3 seems to be broken for ASCII
+// (https://github.com/ddiakopoulos/tinyply/issues/59)
+BENCHMARK_PARSE_NO_TINYPLY("Dragon (ASCII)", "models/dragon_vrip.ply");
+BENCHMARK_PARSE_NO_TINYPLY("Happy Buddha (ASCII)", "models/happy_vrip.ply");
+BENCHMARK_PARSE_NO_TINYPLY("Stanford Bunny (ASCII)", "models/bun_zipper.ply");
 
-BENCHMARK_CAPTURE(BM_WriteHapply, "ASCII", Format::Ascii)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteHapply, "binary", Format::BinaryLittleEndian)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteMshPly, "ASCII", Format::Ascii)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteMshPly, "binary", Format::BinaryLittleEndian)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteNanoPly, "ASCII", Format::Ascii)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteNanoPly, "binary", Format::BinaryLittleEndian)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WritePlywoot, "ASCII", Format::Ascii)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WritePlywoot, "binary", Format::BinaryLittleEndian)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteRPly, "ASCII", Format::Ascii)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteRPly, "binary", Format::BinaryLittleEndian)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteTinyply, "ASCII", Format::Ascii)->Unit(TIME_UNIT);
-BENCHMARK_CAPTURE(BM_WriteTinyply, "binary", Format::BinaryLittleEndian)->Unit(TIME_UNIT);
+#define BENCHMARK_WRITE(benchmarkName)                                                                       \
+  BENCHMARK_CAPTURE(benchmarkName, "ASCII", Format::Ascii)->Unit(TIME_UNIT);                                 \
+  BENCHMARK_CAPTURE(benchmarkName, "binary", Format::BinaryLittleEndian)->Unit(TIME_UNIT);
+
+BENCHMARK_WRITE(BM_WriteHapply);
+BENCHMARK_WRITE(BM_WriteMshPly);
+BENCHMARK_WRITE(BM_WriteNanoPly);
+BENCHMARK_WRITE(BM_WritePlywoot);
+BENCHMARK_WRITE(BM_WriteRPly);
+BENCHMARK_WRITE(BM_WriteTinyply);
 
 BENCHMARK_MAIN();
