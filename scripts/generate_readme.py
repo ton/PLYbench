@@ -5,6 +5,8 @@ import json
 import string
 import sys
 
+from collections import defaultdict
+
 library_url = {
     'hapPLY': 'https://github.com/nmwsharp/happly',
     'miniply': 'https://github.com/vilya/miniply',
@@ -46,9 +48,8 @@ def make_results_table(benchmarks, benchmark_library_names, format_type_fn):
     cpu_time_by_format_type_and_library = {}
 
     format_types = set()
-    models_per_format_type = dict()
 
-    for benchmark in benchmarks:
+    for benchmark in filter(lambda bm : 'error_occurred' not in bm, benchmarks):
         benchmark_name, _, model_name = benchmark['name'].partition('/')
 
         if benchmark_name in benchmark_library_names:
@@ -56,10 +57,7 @@ def make_results_table(benchmarks, benchmark_library_names, format_type_fn):
 
             if format_type not in format_types:
                 format_types.add(format_type)
-                models_per_format_type[format_type] = 1
                 cpu_time_by_format_type_and_library[format_type] = dict()
-            else:
-                models_per_format_type[format_type] += 1
 
             cpu_time = benchmark['cpu_time']
             library = benchmark_library_names[benchmark_name]
@@ -74,10 +72,10 @@ def make_results_table(benchmarks, benchmark_library_names, format_type_fn):
 
     # Calculate an overall relative performance, by weighting the performance
     # per format type according to the number of models for that format type.
-    overall_relative_performance_by_library = dict()
+    overall_relative_performance_by_library = defaultdict(list)
     for format_type, relative_performance_by_library in relative_performance_by_format_type_and_library.items():
         for library, relative_performance in relative_performance_by_library.items():
-            overall_relative_performance_by_library[library] = overall_relative_performance_by_library.get(library, []) + models_per_format_type[format_type] * [relative_performance]
+            overall_relative_performance_by_library[library].append(relative_performance)
 
     for library, relative_performance in overall_relative_performance_by_library.items():
         overall_relative_performance_by_library[library] = sum(relative_performance) / len(relative_performance)

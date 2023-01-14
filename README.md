@@ -47,13 +47,13 @@ The following lists the average relative read performance of each PLY library av
 | # | Library name                                                               | Overall        | ASCII          | Binary big endian | Binary little endian |
 |:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:-----------------:|:--------------------:|
 | 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | *1.00*         | *1.00*         | *1.00*            | *1.00*               |
-| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.72x slower   | 1.83x slower   | 1.89x slower      | 1.12x slower         |
-| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 3.70x slower   | 5.81x slower   | 1.92x slower      | 1.76x slower         |
-| 4 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 6.21x slower   | N/A            | 5.20x slower      | 8.22x slower         |
-| 5 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 6.69x slower   | 11.46x slower  | 2.53x slower      | 2.50x slower         |
-| 6 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 8.48x slower   | 7.42x slower   | 8.77x slower      | 10.71x slower        |
-| 7 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 9.63x slower   | 11.52x slower  | 6.62x slower      | 10.67x slower        |
-| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 25.94x slower  | 43.05x slower  | 9.20x slower      | 14.52x slower        |
+| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.50x slower   | 1.64x slower   | 1.74x slower      | 1.13x slower         |
+| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 2.85x slower   | 5.50x slower   | 1.74x slower      | 1.32x slower         |
+| 4 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 5.75x slower   | 10.57x slower  | 2.31x slower      | 4.36x slower         |
+| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 7.36x slower   | N/A            | 4.74x slower      | 9.97x slower         |
+| 6 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 9.43x slower   | 10.56x slower  | 6.02x slower      | 11.71x slower        |
+| 7 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 9.60x slower   | 6.99x slower   | 7.72x slower      | 14.09x slower        |
+| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 20.92x slower  | 39.00x slower  | 8.18x slower      | 15.59x slower        |
 
 
 The following graph plots average CPU time per model per PLY library (lower numbers are better):
@@ -70,12 +70,12 @@ The following lists the average relative write performance of each PLY library a
 
 | # | Library name                                                               | Overall        | ASCII          | Binary         |
 |:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:--------------:|
-| 1 | [msh_ply](https://github.com/mhalber/msh)                                  | *1.00*         | 1.11x slower   | *1.00*         |
-| 2 | [PLYwoot](https://github.com/ton/plywoot)                                  | 1.00x slower   | *1.00*         | 1.12x slower   |
-| 3 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 1.67x slower   | 1.55x slower   | 1.97x slower   |
-| 4 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 2.32x slower   | 1.03x slower   | 3.87x slower   |
-| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 2.38x slower   | 1.36x slower   | 3.66x slower   |
-| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 4.06x slower   | 1.37x slower   | 7.19x slower   |
+| 1 | [msh_ply](https://github.com/mhalber/msh)                                  | *1.00*         | 1.13x slower   | *1.00*         |
+| 2 | [PLYwoot](https://github.com/ton/plywoot)                                  | 1.01x slower   | *1.00*         | 1.14x slower   |
+| 3 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 1.68x slower   | 1.59x slower   | 2.00x slower   |
+| 4 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 2.30x slower   | 1.04x slower   | 3.86x slower   |
+| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 2.41x slower   | 1.37x slower   | 3.77x slower   |
+| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 4.09x slower   | 1.41x slower   | 7.31x slower   |
 
 
 The following graph plots average CPU time for writing a fixed triangle mesh with 100.000 semi-random triangles per PLY library (lower numbers are better):
@@ -107,6 +107,7 @@ Notes:
 
 1. At the time of writing, tinyply 2.3 seems to have issues reading ASCII files (https://github.com/ddiakopoulos/tinyply/issues/59). Benchmarking ASCII models was therefore disabled for tinyply.
 2. Miniply and plylib do not (directly) support writing PLY files, and are therefore excluded from the write benchmarks.
+3. nanoply does not correctly parse the 'PBRT-v3 Dragon' model, I suspect this is because it does not properly handle the face normals being defined as part of the face element.
 
 ## Models
 

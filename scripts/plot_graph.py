@@ -43,7 +43,7 @@ write_benchmark_parser_names = { \
 def render_graph(benchmarks, output_png_file, benchmark_metric, benchmark_parser_names, title, ylabel):
     # Mapping from a parser name and model name to the time required to parse that
     # model by that parser.
-    cpu_times_by_parser_and_model = {}
+    metric_by_parser_and_model = {}
 
     # Create a mapping, from PLY file to parser benchmark results.
     for benchmark in benchmarks:
@@ -55,10 +55,10 @@ def render_graph(benchmarks, output_png_file, benchmark_metric, benchmark_parser
         model_name = '\n('.join(model_name.strip('"').split(' ('))
 
         if benchmark_name in benchmark_parser_names:
-            cpu_times_by_parser_and_model[(benchmark_name, model_name)] = benchmark[benchmark_metric]
+            metric_by_parser_and_model[(benchmark_name, model_name)] = float('NaN') if 'error_occurred' in benchmark else benchmark[benchmark_metric]
 
     # List of 3D model names, sorted on the format type first, model name second.
-    model_names = sorted(list(set([model_name for _, model_name in cpu_times_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
+    model_names = sorted(list(set([model_name for _, model_name in metric_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(width / dpi, height / dpi))
     x_offset = list(range(len(model_names)))
@@ -67,8 +67,8 @@ def render_graph(benchmarks, output_png_file, benchmark_metric, benchmark_parser
     bar_offset = -0.5 * bars_width
 
     for benchmark_name, parser_name in benchmark_parser_names.items():
-        cpu_times = [cpu_times_by_parser_and_model.get((benchmark_name, model_name), float("NaN")) for model_name in model_names]
-        rect = ax.bar(list(map(lambda x : x + bar_offset, x_offset)), cpu_times, bar_width, label=parser_name)
+        metric = [metric_by_parser_and_model.get((benchmark_name, model_name), float('NaN')) for model_name in model_names]
+        rect = ax.bar(list(map(lambda x : x + bar_offset, x_offset)), metric, bar_width, label=parser_name)
         bar_offset += bar_width
         ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize, rotation=70)
 
@@ -104,7 +104,7 @@ def render_write_cpu_time_graph(benchmarks, output_png_file):
 
 def render_parse_transfer_speed_graph(benchmarks, output_png_file):
     for benchmark in benchmarks:
-        benchmark['mib_per_second'] = benchmark['bytes_per_second'] / (1024 * 1024)
+        benchmark['mib_per_second'] = float('NaN') if 'error_occurred' in benchmark else benchmark['bytes_per_second'] / (1024 * 1024)
 
     render_graph(benchmarks,
                  output_png_file,
@@ -116,7 +116,7 @@ def render_parse_transfer_speed_graph(benchmarks, output_png_file):
 
 def render_write_transfer_speed_graph(benchmarks, output_png_file):
     for benchmark in benchmarks:
-        benchmark['mib_per_second'] = benchmark['bytes_per_second'] / (1024 * 1024)
+        benchmark['mib_per_second'] = float('NaN') if 'error_occurred' in benchmark else benchmark['bytes_per_second'] / (1024 * 1024)
 
     render_graph(benchmarks,
                  output_png_file,
