@@ -66,8 +66,8 @@ std::string meshComparisonInfo(
 TEST_CASE("Verify parsers against PLYwoot")
 {
   auto filename = GENERATE(
-      "bun_zipper.ply", "dragon_vrip.ply", "happy_vrip.ply", "lucy.ply", "xyzrgb_dragon.ply",
-      "Doom combat scene.ply");
+      "bun_zipper.ply", "dragon_remeshed.ply", "dragon_vrip.ply", "happy_vrip.ply", "lucy.ply",
+      "xyzrgb_dragon.ply", "Doom combat scene.ply");
 
   const auto plywootMesh = parsePlywoot(std::string("models/") + filename);
 
@@ -97,10 +97,13 @@ TEST_CASE("Verify parsers against PLYwoot")
 
   SECTION("nanoply")
   {
-    auto mesh = parseNanoPly(std::string("models/") + filename);
+    if (std::string(filename) != "dragon_remeshed.ply")
+    {
+      auto mesh = parseNanoPly(std::string("models/") + filename);
 
-    INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "nanoply", "PLYwoot"));
-    CHECK(mesh == plywootMesh);
+      INFO(std::string{filename} + ": " + meshComparisonInfo(mesh, plywootMesh, "nanoply", "PLYwoot"));
+      CHECK(mesh == plywootMesh);
+    }
   }
 
   SECTION("plylib")
@@ -124,7 +127,7 @@ TEST_CASE("Verify parsers against PLYwoot")
 // https://github.com/ddiakopoulos/tinyply/issues/59).
 TEST_CASE("Verify tinyply against PLYwoot")
 {
-  auto filename = GENERATE("lucy.ply", "xyzrgb_dragon.ply", "Doom combat scene.ply");
+  auto filename = GENERATE("dragon_remeshed.ply", "lucy.ply", "xyzrgb_dragon.ply", "Doom combat scene.ply");
 
   const auto plywootMesh = parsePlywoot(std::string("models/") + filename);
 

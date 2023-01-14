@@ -145,6 +145,10 @@ std::optional<TriangleMesh> parseMshPly(const std::string &filename)
 std::optional<TriangleMesh> parseNanoPly(const std::string &filename)
 {
   nanoply::Info info(filename);
+  if (info.errInfo != nanoply::NNP_OK)
+  {
+    return std::nullopt;
+  }
 
   TriangleMesh mesh;
   mesh.triangles.resize(info.GetFaceCount());

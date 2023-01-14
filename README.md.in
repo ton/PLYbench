@@ -89,6 +89,7 @@ Notes:
 
 1. At the time of writing, tinyply 2.3 seems to have issues reading ASCII files (https://github.com/ddiakopoulos/tinyply/issues/59). Benchmarking ASCII models was therefore disabled for tinyply.
 2. Miniply and plylib do not (directly) support writing PLY files, and are therefore excluded from the write benchmarks.
+3. nanoply does not correctly parse the 'PBRT-v3 Dragon' model, I suspect this is because it does not properly handle the face normals being defined as part of the face element.
 
 ## Models
 

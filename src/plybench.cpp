@@ -214,6 +214,7 @@ BENCHMARK_PARSE("Asian Dragon (binary big endian)", "models/xyzrgb_dragon.ply")
 BENCHMARK_PARSE("Lucy (binary big endian)", "models/lucy.ply");
 
 BENCHMARK_PARSE("DOOM Combat Scene (binary little endian)", "models/Doom combat scene.ply");
+BENCHMARK_PARSE("PBRT-v3 Dragon (binary little endian)", "models/dragon_remeshed.ply");
 
 // Note; tinyply 2.3 seems to be broken for ASCII
 // (https://github.com/ddiakopoulos/tinyply/issues/59)
