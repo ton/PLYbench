@@ -68,9 +68,9 @@ class Model:
 # Download Stanford models.
 stanford_url = 'http://graphics.stanford.edu'
 
-stanford_models = [Model('Stanford Bunny', '%s/bunny.tar.gz' % stanford_url, archive_ply_filename='pub/3Dscanrep/bunny/reconstruction/bun_zipper.ply'),
-                   Model('Happy Buddha', '%s/happy/happy_recon.tar.gz' % stanford_url, archive_ply_filename='pub/3Dscanrep/happy_recon/happy_vrip.ply'),
-                   Model('Dragon', '%s/dragon/dragon_recon.tar.gz' % stanford_url, archive_ply_filename='pub/3Dscanrep/dragon_recon/dragon_vrip.ply'),
+stanford_models = [Model('Stanford Bunny', '%s/pub/3Dscanrep/bunny.tar.gz' % stanford_url, archive_ply_filename='bunny/reconstruction/bun_zipper.ply'),
+                   Model('Happy Buddha', '%s/pub/3Dscanrep/happy/happy_recon.tar.gz' % stanford_url, archive_ply_filename='happy_recon/happy_vrip.ply'),
+                   Model('Dragon', '%s/pub/3Dscanrep/dragon/dragon_recon.tar.gz' % stanford_url, archive_ply_filename='dragon_recon/dragon_vrip.ply'),
                    Model('Asian Dragon', '%s/data/3Dscanrep/xyzrgb/xyzrgb_dragon.ply.gz' % stanford_url),
                    Model('Lucy', '%s/data/3Dscanrep/lucy.tar.gz' % stanford_url, archive_ply_filename='lucy.ply')]
 for model in stanford_models:
