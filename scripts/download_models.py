@@ -50,7 +50,7 @@ class Model:
 
         # In case the local PLY file does not exist, extract it.
         if not os.path.exists(ply_filename):
-            if model_filename.endswith('.tar.gz') and archive_ply_filename is not None:
+            if model_filename.endswith('.tar.gz') and self.archive_ply_filename is not None:
                 with tarfile.open(model_filename, 'r') as archive_file:
                     member = archive_file.getmember(self.archive_ply_filename)
                     member.name = ply_filename
