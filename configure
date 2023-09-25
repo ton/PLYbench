@@ -11,7 +11,7 @@ EOF
   exit 0
 }
 
-build_type="debug"
+build_type="release"
 cmake_install_prefix="/usr/local"
 
 for arg in "$@"; do
@@ -42,11 +42,11 @@ else
   exit 1
 fi
 
-printf "** Configuring a $build_type build, with installation prefix '$cmake_install_prefix'...\n\n"
+printf "** Configuring a ${build_type} build, with installation prefix '${cmake_install_prefix}'...\n\n"
 
 cd build && cmake ../ -GNinja \
   -DCMAKE_MAKE_PROGRAM="$(command -v ninja)" \
   -DCMAKE_INSTALL_PREFIX="$cmake_install_prefix" \
-  -DCMAKE_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=${cmake_build_type}
 
 printf "\n** Configuration complete, to build issue 'ninja -C build'.\n"
