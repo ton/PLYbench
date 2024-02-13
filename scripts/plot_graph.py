@@ -2,7 +2,10 @@
 
 import argparse
 import json
+import math
 import matplotlib.pyplot
+import os
+import re
 import sys
 
 dpi = 163
@@ -40,10 +43,42 @@ write_benchmark_parser_names = { \
     'BM_WriteTinyply' : 'tinyply 2.3' \
 }
 
-def render_graph(benchmarks, output_png_file, benchmark_metric, benchmark_parser_names, title, ylabel):
-    # Mapping from a parser name and model name to the time required to parse that
-    # model by that parser.
-    metric_by_parser_and_model = {}
+def legend_without_duplicate_labels(ax, **kwargs):
+    handles, labels = ax.get_legend_handles_labels()
+    unique = [(h, l) for i, (h, l) in enumerate(zip(handles, labels)) if l not in labels[:i]]
+    ax.legend(*zip(*unique), **kwargs)
+
+def machine_info_text_box(ax):
+    for line in open('/proc/cpuinfo', 'r').readlines():
+        m = re.match('^model name.*:(.*)$', line)
+        if m:
+            cpu = m.group(1).strip()
+    for line in open('/proc/meminfo', 'r').readlines():
+        m = re.match('^MemTotal.*:(.*)$', line)
+        if m:
+            memory = m.group(1).strip()
+
+    sysname = os.uname().sysname
+
+    text_length = 1.9 * max(len(cpu), len(memory), len(sysname))
+    fontsize = legend_fontsize * 0.9
+
+    # Draw two different text boxes, to be able to control alignment.
+    heading_text = matplotlib.offsetbox.AnchoredText(('CPU:\nMemory:\nOS:{:%d}' % text_length).format(' '), prop={'fontweight': 'demibold', 'fontsize': fontsize * 0.8}, borderpad=0.8, loc='upper center')
+    heading_text.patch.set_boxstyle('round')
+    heading_text.patch.set_facecolor('blanchedalmond')
+    heading_text.patch.set_edgecolor('orange')
+
+    info_text = matplotlib.offsetbox.AnchoredText('%s\n%s\n%s' % (cpu, memory, sysname), prop={'fontsize': fontsize * 0.8, 'ha': 'right'}, borderpad=0.8, loc='upper center')
+    info_text.patch.set_alpha(0.0)
+
+    ax.add_artist(heading_text)
+    ax.add_artist(info_text)
+
+def render_graph(benchmarks, output_png_file, benchmark_metric, benchmark_parser_names, title, ylabel, metrics_reversed=False):
+    # Mapping from a model name to a tuple of the parser name and the time
+    # required to parse the model by that parser.
+    metrics_by_model = {}
 
     # Create a mapping, from PLY file to parser benchmark results.
     for benchmark in benchmarks:
@@ -54,29 +89,45 @@ def render_graph(benchmarks, output_png_file, benchmark_metric, benchmark_parser
         # on a separate line.
         model_name = '\n('.join(model_name.strip('"').split(' ('))
 
+        if not model_name in metrics_by_model:
+            metrics_by_model[model_name] = []
+
         if benchmark_name in benchmark_parser_names:
-            metric_by_parser_and_model[(benchmark_name, model_name)] = float('NaN') if 'error_occurred' in benchmark else benchmark[benchmark_metric]
+            parser_name = benchmark_parser_names[benchmark_name]
+            metrics_by_model[model_name].append((parser_name, float('NaN') if 'error_occurred' in benchmark else benchmark[benchmark_metric]))
 
     # List of 3D model names, sorted on the format type first, model name second.
-    model_names = sorted(list(set([model_name for _, model_name in metric_by_parser_and_model.keys()])), key=lambda n: tuple(reversed(n.split('\n'))))
+    model_names = sorted(list([model_name for model_name, metrics in metrics_by_model.items() if metrics]), key=lambda n: tuple(reversed(n.split('\n'))))
 
     fig, ax = matplotlib.pyplot.subplots(figsize=(width / dpi, height / dpi))
-    x_offset = list(range(len(model_names)))
+
+    prop_cycle = matplotlib.pyplot.rcParams['axes.prop_cycle']
+    colors = prop_cycle.by_key()['color']
+
+    # Map a parser name on a color.
+    parser_color = {parser_name: colors[idx] for idx, parser_name in enumerate(benchmark_parser_names.values())}
 
     bar_width = bars_width / len(benchmark_parser_names)
-    bar_offset = -0.5 * bars_width
+    bar_offset = (1.0 - bars_width) * 0.5 - 0.5 * bars_width
 
-    for benchmark_name, parser_name in benchmark_parser_names.items():
-        metric = [metric_by_parser_and_model.get((benchmark_name, model_name), float('NaN')) for model_name in model_names]
-        rect = ax.bar(list(map(lambda x : x + bar_offset, x_offset)), metric, bar_width, label=parser_name)
-        bar_offset += bar_width
+    for idx, model_name in enumerate(model_names):
+        # Sort metrics for the current model.
+        model_metrics = sorted(metrics_by_model[model_name], key=lambda t : (float('+inf') if math.isnan(t[1]) else t[1]) * (-1 if metrics_reversed else 1))
+
+        parser_names = [parser_name for parser_name, _ in model_metrics]
+        metrics = [metric for _, metric in model_metrics]
+        x_offsets = [idx + bar_offset + i * bar_width for i in range(len(metrics))]
+
+        rect = ax.bar(x_offsets, metrics, bar_width, color=[parser_color[parser_name] for parser_name in parser_names], label=parser_names)
         ax.bar_label(rect, fmt='%.2f', padding=3, fontsize=bar_label_fontsize, rotation=70)
 
     ax.set_title(title, fontsize=title_fontsize)
-    ax.set_xticks(x_offset, model_names)
+    ax.set_xticks(list(range(len(model_names))), labels=model_names)
     ax.set_ylabel(ylabel, fontsize=ylabel_fontsize)
     ax.tick_params(axis='both', labelsize=ticks_fontsize)
-    ax.legend(fontsize=legend_fontsize)
+    ax.tick_params(axis='x', length=0)
+
+    legend_without_duplicate_labels(ax, fontsize=legend_fontsize)
 
     fig.tight_layout()
 
@@ -88,7 +139,7 @@ def render_parse_cpu_time_graph(benchmarks, output_png_file):
                  output_png_file,
                  'cpu_time',
                  parse_benchmark_parser_names,
-                 'Average CPU time for parsing various models using different PLY libraries',
+                 'Average CPU time parsing triangle mesh models [ms] (lower is better)',
                  'CPU time [%s]' % time_unit
     )
 
@@ -98,7 +149,7 @@ def render_write_cpu_time_graph(benchmarks, output_png_file):
                  output_png_file,
                  'cpu_time',
                  write_benchmark_parser_names,
-                 'Average CPU time for writing random mesh data (both ASCII and binary little endian)',
+                 'Average CPU time writing random mesh data [ms] (lower is better)',
                  'CPU time [%s]' % time_unit
     )
 
@@ -110,8 +161,9 @@ def render_parse_transfer_speed_graph(benchmarks, output_png_file):
                  output_png_file,
                  'mib_per_second',
                  parse_benchmark_parser_names,
-                 'Data transfer speeds while parsing various models using different PLY libraries',
-                 'Read performance [MiB/s]'
+                 'Data transfer speeds parsing various models [MiB/s] (higher is better)',
+                 'Read performance [MiB/s]',
+                 metrics_reversed=True
     )
 
 def render_write_transfer_speed_graph(benchmarks, output_png_file):
@@ -122,8 +174,9 @@ def render_write_transfer_speed_graph(benchmarks, output_png_file):
                  output_png_file,
                  'mib_per_second',
                  write_benchmark_parser_names,
-                 'Data transfer speeds while writing a uniform triangle mesh using different PLY libraries',
-                 'Write performance [MiB/s]'
+                 'Data transfer speeds writing uniform triangle meshes [MiB/s] (higher is better)',
+                 'Write performance [MiB/s]',
+                 metrics_reversed=True
     )
 
 if __name__ == '__main__':
