@@ -15,7 +15,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH})
 set(CMAKE_CXX_STANDARD 17)
 
 # By default, build in release mode, using -O3.
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native")
 
 # Put all executables in build/.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -91,10 +91,10 @@ target_link_libraries(plybench
 
 target_compile_options(tests
   PRIVATE
-  "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;-march=native>"
+  "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;>"
 )
 
 target_compile_options(plybench
   PRIVATE
-  "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;-march=native>"
+  "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;>"
 )
