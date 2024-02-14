@@ -86,8 +86,6 @@ The following graph plots average transfer speeds in MiB per second for writing 
 
 ![Write transfer speed](assets/write_transfer_speed.png "Write transfer speed")
 
-## Conclusions
-
 ## PLY libraries
 
 The following PLY libraries are included in the benchmarks:
