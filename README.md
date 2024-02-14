@@ -38,7 +38,7 @@ This puts some of the PLY libraries implemented in C at a slight disadvantage, s
 
 The following results were obtained on an AMD Ryzen 5 3600 6-Core processor using a Kingston A2000 NVMe SSD. PLYbench was compiled using GCC 12.2, with optimization level `-O2`. For each PLY library, an attempt was made to implement the most efficient way to either parser or write a PLY model. Some libraries support defining known list sizes for example to speed up parsing. It may be possible though that for some of the libraries, improvements are possible; pull requests are welcome!
 
-For more information on the models that were used, see the [Models](https://github.com/ton/PLYbench#models) section. For more information on the PLY libraries that were benchmarked, see the [PLY libraries](https://github.com/ton/PLYbench#ply-libraries) section.
+For more information on the models that were used, see the [Models](#models) section. For more information on the PLY libraries that were benchmarked, see the [PLY libraries](#ply-libraries) section.
 
 ### Parse benchmark results
 
@@ -122,7 +122,7 @@ The following models are used in the benchmarks:
 | Asian Dragon          | Binary big endian    | 3609600     | 7219045    | [Stanford 3D Scanning Repository](http://graphics.stanford.edu/data/3Dscanrep/)
 | DOOM Combat Scene     | Binary little endian | 1612868     | 3224192    | [Artec3D](https://www.artec3d.com/3d-models/doom-combat-scene)
 
-The PLY models are not included in the repository. Use `scripts/download_models.py` to download the models used in the benchmarks and to be able to [reproduce the benchmark results](https://github.com/ton/PLYbench#reproducing-the-benchmark-results).
+The PLY models are not included in the repository. Use `scripts/download_models.py` to download the models used in the benchmarks and to be able to [reproduce the benchmark results](#reproducing-the-benchmark-results).
 
 ## Reproducing the benchmark results
 
@@ -164,7 +164,7 @@ To be able to run the benchmarks on your own PC, you will first need to download
 $ scripts/download_models.py
 ```
 
-This should download all models used in the benchmarks. The models will be stored in `models/`. Subsequently, after all required [dependencies](https://github.com/ton/PLYbench#dependencies) have been met, build PLYbench using CMake:
+This should download all models used in the benchmarks. The models will be stored in `models/`. Subsequently, after all required [dependencies](#dependencies) have been met, build PLYbench using CMake:
 
 ```
 $ ./configure && ninja -C build -v
