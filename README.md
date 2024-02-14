@@ -64,6 +64,8 @@ The following graph plots average transfer speeds in MiB per second for parsing 
 
 ![Parse transfer speed](assets/parse_transfer_speed.png "Parse transfer speed")
 
+Although these tests were run on a little endian machine, the transfer speeds for the models storing their data using a big endian representation achieved higher transfer speeds. This is due to the layout of the vertex data in the underlying PLY files. For the binary big endian models, parsing the data boils down to `memcpy`'ing large blocks of memory without having to stride over the data and after that do a big to little endian conversion. The binary little endian models require striding over the data in the PLY file, causing the slightly degraded performance.
+
 ### Write benchmark results
 
 The following lists the average relative write performance of each PLY library averaged per PLY format type, note that only binary little endian is tested as a binary output format in this case:
