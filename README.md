@@ -36,7 +36,7 @@ This puts some of the PLY libraries implemented in C at a slight disadvantage, s
 
 ## Benchmark results
 
-The following results were obtained on an AMD Ryzen 5 3600 6-Core processor using a Kingston A2000 NVMe SSD. PLYbench was compiled using GCC 12.2, with optimization level `-O2`. For each PLY library, an attempt was made to implement the most efficient way to either parser or write a PLY model. Some libraries support defining known list sizes for example to speed up parsing. It may be possible though that for some of the libraries, improvements are possible; pull requests are welcome!
+The following results were obtained on an AMD Ryzen 5 3600 6-Core processor using a Kingston A2000 NVMe SSD. PLYbench was compiled using GCC 13.21, with optimization level `-O3`. For each PLY library, an attempt was made to implement the most efficient way to either parser or write a PLY model. Some libraries support defining known list sizes for example to speed up parsing. It may be possible though that for some of the libraries, improvements are possible; pull requests are welcome!
 
 For more information on the models that were used, see the [Models](#models) section. For more information on the PLY libraries that were benchmarked, see the [PLY libraries](#ply-libraries) section.
 
@@ -47,13 +47,13 @@ The following lists the average relative read performance of each PLY library av
 | # | Library name                                                               | Overall        | ASCII          | Binary big endian | Binary little endian |
 |:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:-----------------:|:--------------------:|
 | 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | *1.00*         | *1.00*         | *1.00*            | *1.00*               |
-| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.74x slower   | 1.53x slower   | 2.49x slower      | 1.21x slower         |
-| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 3.36x slower   | 6.26x slower   | 2.47x slower      | 1.33x slower         |
-| 4 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 6.94x slower   | 12.83x slower  | 3.67x slower      | 4.33x slower         |
-| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 7.65x slower   | N/A            | 6.07x slower      | 9.22x slower         |
-| 6 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 9.80x slower   | 11.36x slower  | 7.33x slower      | 10.69x slower        |
-| 7 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 10.93x slower  | 7.63x slower   | 11.16x slower     | 14.01x slower        |
-| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 19.29x slower  | 29.52x slower  | 12.71x slower     | 15.64x slower        |
+| 2 | [miniply](https://github.com/vilya/miniply)                                | 1.77x slower   | 1.58x slower   | 2.52x slower      | 1.20x slower         |
+| 3 | [msh_ply](https://github.com/mhalber/msh)                                  | 3.18x slower   | 5.79x slower   | 2.46x slower      | 1.29x slower         |
+| 4 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 6.82x slower   | 12.43x slower  | 3.70x slower      | 4.34x slower         |
+| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 7.54x slower   | N/A            | 6.11x slower      | 8.97x slower         |
+| 6 | [plylib](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/ply)      | 9.89x slower   | 11.90x slower  | 7.26x slower      | 10.50x slower        |
+| 7 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 11.24x slower  | 7.85x slower   | 11.71x slower     | 14.17x slower        |
+| 8 | [hapPLY](https://github.com/nmwsharp/happly)                               | 18.79x slower  | 28.90x slower  | 12.31x slower     | 15.15x slower        |
 
 
 The following graph plots average CPU time per model per PLY library (lower numbers are better):
@@ -73,11 +73,11 @@ The following lists the average relative write performance of each PLY library a
 | # | Library name                                                               | Overall        | ASCII          | Binary         |
 |:-:|:--------------------------------------------------------------------------:|:--------------:|:--------------:|:--------------:|
 | 1 | [PLYwoot](https://github.com/ton/plywoot)                                  | *1.00*         | *1.00*         | *1.00*         |
-| 2 | [msh_ply](https://github.com/mhalber/msh)                                  | 4.21x slower   | 7.33x slower   | 1.10x slower   |
-| 3 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 5.10x slower   | 6.71x slower   | 3.49x slower   |
-| 4 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 5.82x slower   | 9.85x slower   | 1.79x slower   |
-| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 6.14x slower   | 8.96x slower   | 3.33x slower   |
-| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 7.39x slower   | 8.88x slower   | 5.90x slower   |
+| 2 | [msh_ply](https://github.com/mhalber/msh)                                  | 4.16x slower   | 7.29x slower   | 1.04x slower   |
+| 3 | [nanoply](https://github.com/cnr-isti-vclab/vcglib/tree/main/wrap/nanoply) | 5.46x slower   | 9.16x slower   | 1.76x slower   |
+| 4 | [RPly](https://w3.impa.br/~diego/software/rply)                            | 5.52x slower   | 6.93x slower   | 4.11x slower   |
+| 5 | [tinyply 2.3](https://github.com/ddiakopoulos/tinyply)                     | 5.58x slower   | 7.87x slower   | 3.30x slower   |
+| 6 | [hapPLY](https://github.com/nmwsharp/happly)                               | 6.96x slower   | 8.04x slower   | 5.87x slower   |
 
 
 The following graph plots average CPU time for writing a fixed triangle mesh with 100.000 semi-random triangles per PLY library (lower numbers are better):

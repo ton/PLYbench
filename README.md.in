@@ -36,7 +36,7 @@ This puts some of the PLY libraries implemented in C at a slight disadvantage, s
 
 ## Benchmark results
 
-The following results were obtained on an AMD Ryzen 5 3600 6-Core processor using a Kingston A2000 NVMe SSD. PLYbench was compiled using GCC 12.2, with optimization level `-O2`. For each PLY library, an attempt was made to implement the most efficient way to either parser or write a PLY model. Some libraries support defining known list sizes for example to speed up parsing. It may be possible though that for some of the libraries, improvements are possible; pull requests are welcome!
+The following results were obtained on an AMD Ryzen 5 3600 6-Core processor using a Kingston A2000 NVMe SSD. PLYbench was compiled using GCC 13.21, with optimization level `-O3`. For each PLY library, an attempt was made to implement the most efficient way to either parser or write a PLY model. Some libraries support defining known list sizes for example to speed up parsing. It may be possible though that for some of the libraries, improvements are possible; pull requests are welcome!
 
 For more information on the models that were used, see the [Models](#models) section. For more information on the PLY libraries that were benchmarked, see the [PLY libraries](#ply-libraries) section.
 
