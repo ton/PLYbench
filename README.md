@@ -178,7 +178,7 @@ $ build/plybench --benchmark_out=benchmarks.json --benchmark_out_format=json
 
 ### Generating the graphs
 
-The generated JSON file `benchmarks.json` can be used as an input for `scripts/plot_graph.py` to render various graphs. For example, to generate the the parse CPU times graph:
+The generated JSON file `benchmarks.json` can be used as an input for `scripts/plot_graph.py` to render various graphs. For example, to generate the parse CPU times graph:
 
 ```
 $ cat benchmarks.json | scripts/plot_graph.py -o parse_cpu_time.png -t parse_cpu_time
