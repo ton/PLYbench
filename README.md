@@ -143,7 +143,7 @@ To be able to build the unit tests, the following dependency is required:
 
 * [Catch2](https://github.com/catchorg/Catch2)
 
-Note that to be able to reproduce the parse performance of PLYwoot for ASCII models, it is recommend to install the following dependencies as well:
+Note that to be able to reproduce the parse performance of PLYwoot for ASCII models, it is recommended to install the following dependencies as well:
 
 * [fast_float](https://github.com/fastfloat/fast_float)
 * [fast_int](https://github.com/ton/fast_int)
