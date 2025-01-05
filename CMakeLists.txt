@@ -51,17 +51,17 @@ add_library(PLYbench OBJECT
 
 target_include_directories(msh_ply SYSTEM
   PRIVATE
-  submodules
+    submodules
 )
 
 target_include_directories(PLYbench SYSTEM
   PRIVATE
-  submodules
+    submodules
 )
 
 target_link_libraries(PLYbench
   PRIVATE
-  PLYwoot::plywoot
+    PLYwoot::plywoot
 )
 
 # Define the benchmark target.
@@ -75,26 +75,26 @@ add_executable(tests
 )
 target_link_libraries(tests
   PRIVATE
-  msh_ply
-  RPly
-  PLYbench
-  Catch2::Catch2WithMain
+    msh_ply
+    RPly
+    PLYbench
+    Catch2::Catch2WithMain
 )
 
 target_link_libraries(plybench
   PRIVATE
-  msh_ply
-  RPly
-  PLYbench
-  benchmark::benchmark
+    msh_ply
+    RPly
+    PLYbench
+    benchmark::benchmark
 )
 
 target_compile_options(tests
   PRIVATE
-  "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;>"
+    "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;>"
 )
 
 target_compile_options(plybench
   PRIVATE
-  "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;>"
+    "$<$<CONFIG:RELEASE>:-Wall;-Wextra;-Wpedantic;-Werror;-Wno-unused-parameter;-fno-strict-aliasing;>"
 )
