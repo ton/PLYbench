@@ -13,6 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH})
 
 # Require C++17 support.
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # By default, build in release mode, using -O3.
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -march=native")
